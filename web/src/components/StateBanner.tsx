@@ -17,7 +17,7 @@ export function StateBanner() {
           tone="danger"
           title="Liquidation-eligible"
           action={
-            <Link className="banner__link" to="/app/confluence">
+            <Link className="banner__link" to="/app/swap">
               Redemption stays open
             </Link>
           }
@@ -49,7 +49,7 @@ export function StateBanner() {
         tone={rate.status === 'drop' ? 'danger' : 'warn'}
         title={titles[rate.status]}
         action={
-          <Link className="banner__link" to="/app/confluence">
+          <Link className="banner__link" to="/app/swap">
             Exits are open
           </Link>
         }

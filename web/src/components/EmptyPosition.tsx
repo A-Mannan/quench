@@ -1,34 +1,17 @@
+import { useQuench } from '../client';
 import { ButtonLink } from './Button';
-import { Panel } from './Panel';
-import { SimulatedBadge } from './SimulatedBadge';
-import { Vessel } from './Vessel';
+import { InstrumentBar } from './InstrumentBar';
 
 export function EmptyPosition() {
+  const { snapshot } = useQuench();
   return (
-    <Panel className="empty-position" meta="No collateral · no debt" title="The Basin is empty">
-      <div className="empty-position__grid">
-        <div className="empty-position__diagram">
-          <Vessel
-            fillPct={0}
-            label="Basin collateral"
-            value={0n}
-            unit="stINJ"
-            sublabel="Empty — no pressure"
-          />
-        </div>
-        <div className="empty-position__copy">
-          <p>
-            Deposit stINJ to pressurise the vessel. Then mint qINJ against it. Nothing moves until
-            you choose an amount, and every consequence is shown before the button is enabled.
-          </p>
-          <div className="empty-position__actions">
-            <ButtonLink to="/app/basin" size="lg">
-              Deposit stINJ
-            </ButtonLink>
-            <SimulatedBadge compact />
-          </div>
-        </div>
-      </div>
-    </Panel>
+    <section className="card empty-simple">
+      <InstrumentBar crumb="Basin / 01" chainId={snapshot.chainId} />
+      <h2>The Basin is empty</h2>
+      <p className="muted">Deposit stINJ to borrow qINJ. No liquidation risk.</p>
+      <ButtonLink to="/app/basin" full size="lg">
+        Deposit stINJ
+      </ButtonLink>
+    </section>
   );
 }

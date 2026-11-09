@@ -231,7 +231,6 @@
 }
 
 .hero [data-enter] {
-  opacity: 0;
   animation: hero-in 700ms var(--ease-enter) both;
 }
 
@@ -264,11 +263,9 @@
 
 @keyframes hero-in {
   from {
-    opacity: 0;
     transform: translateY(14px);
   }
   to {
-    opacity: 1;
     transform: none;
   }
 }
@@ -1519,6 +1516,10 @@
   background: var(--heat-on-dark);
 }
 
+.risk-dot--ok {
+  background: #4ade80;
+}
+
 .risk-row p {
   max-width: 62ch;
   font-size: 0.8125rem;
@@ -2213,7 +2214,6 @@
 
 @media (prefers-reduced-motion: reduce) {
   .hero [data-enter] {
-    opacity: 1;
     animation: none;
   }
 

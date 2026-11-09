@@ -11,7 +11,7 @@ secrets/
 
 # Dependencies
 node_modules/
-lib/
+/lib/
 
 # Foundry build output
 out/

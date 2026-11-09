@@ -1,174 +1,110 @@
-import { NavLink, Outlet, useLocation } from 'react-router-dom';
-import {
-  ArrowClockwise,
-  ArrowUpRight,
-  ChartLineDown,
-  Coins,
-  Drop,
-  Gauge,
-  Info,
-  ListBullets,
-} from '@phosphor-icons/react';
+import { useEffect, useState } from 'react';
+import { NavLink, Outlet } from 'react-router-dom';
+import { Wallet } from '@phosphor-icons/react';
 import { useQuench } from '../client';
-import { formatAmount, shortAddress } from '../client/math';
+import { shortAddress } from '../client/math';
 import { Banner } from './Banner';
 import { ConnectGate } from './ConnectGate';
-import { RateStatusPill } from './RateStatusPill';
-import { SimulatedBadge } from './SimulatedBadge';
 import { SimulationDock } from './SimulationDock';
 import { ThemeToggle } from './ThemeToggle';
 import { useSources } from './SourcesDrawer';
 import { TxPanel } from './TxPanel';
 import { Wordmark } from './Wordmark';
 
-const NAV_GROUPS = [
-  {
-    label: 'Instrument',
-    items: [
-      { to: '/app', label: 'Overview', icon: Gauge, end: true },
-      { to: '/app/basin', label: 'Basin', icon: Drop },
-      { to: '/app/borrow', label: 'Borrow', icon: Coins },
-    ],
-  },
-  {
-    label: 'Flow',
-    items: [
-      { to: '/app/wellspring', label: 'Wellspring', icon: ArrowClockwise },
-      { to: '/app/confluence', label: 'Confluence', icon: ArrowUpRight },
-      { to: '/app/activity', label: 'Activity', icon: ListBullets },
-    ],
-  },
+const NAV = [
+  { to: '/app', label: 'Dashboard', end: true },
+  { to: '/app/loans', label: 'Loans' },
+  { to: '/app/positions', label: 'Positions' },
+  { to: '/app/swap', label: 'Swap' },
 ];
 
-const NAV = NAV_GROUPS.flatMap((group) => group.items);
-
-const TITLES: Record<string, string> = {
-  '/app': 'Overview',
-  '/app/basin': 'Basin',
-  '/app/borrow': 'Borrow',
-  '/app/wellspring': 'Wellspring',
-  '/app/confluence': 'Confluence',
-  '/app/activity': 'Activity',
-};
+function useHtmlTheme() {
+  const [theme, setTheme] = useState<'light' | 'dark'>(() =>
+    typeof document !== 'undefined' && document.documentElement.dataset.theme === 'light'
+      ? 'light'
+      : 'dark',
+  );
+  useEffect(() => {
+    const el = document.documentElement;
+    const obs = new MutationObserver(() => {
+      setTheme(el.dataset.theme === 'light' ? 'light' : 'dark');
+    });
+    obs.observe(el, { attributes: true, attributeFilter: ['data-theme'] });
+    return () => obs.disconnect();
+  }, []);
+  return theme;
+}
 
 export function AppShell() {
   const { snapshot } = useQuench();
-  const location = useLocation();
   const openSources = useSources();
-  const title = TITLES[location.pathname] ?? 'Overview';
   const wrong = snapshot.network === 'wrong';
+  const theme = useHtmlTheme();
+
+  if (typeof document !== 'undefined' && document.documentElement.dataset.theme == null) {
+    document.documentElement.dataset.theme = 'dark';
+  }
 
   if (!snapshot.connected) {
     return (
       <>
-        <ConnectGate />
+        <div className={theme === 'light' ? 'app-light app-light--gate' : 'app-dark app-dark--gate'}>
+          <ConnectGate />
+        </div>
         <TxPanel />
       </>
     );
   }
 
   return (
-    <div className="app-shell">
+    <div className={`app-shell app-shell--simple ${theme === 'light' ? 'app-light' : 'app-dark'}`}>
       <a className="skip-link" href="#main">
         Skip to content
       </a>
-      <aside className="rail" aria-label="Quench sections">
-        <div className="rail__brand">
-          <Wordmark to="/" />
-        </div>
-        <nav className="rail__nav" aria-label="Quench sections">
-          {NAV_GROUPS.map((group) => (
-            <div className="rail__group" key={group.label}>
-              <div className="rail__group-label">{group.label}</div>
-              {group.items.map((item) => {
-                const Icon = item.icon;
-                return (
-                  <NavLink
-                    key={item.to}
-                    to={item.to}
-                    end={item.end}
-                    className={({ isActive }) => `rail__link${isActive ? ' is-active' : ''}`}
-                    data-testid={`nav-${item.label.toLowerCase()}`}
-                  >
-                    <Icon size={18} weight="regular" aria-hidden="true" />
-                    <span>{item.label}</span>
-                  </NavLink>
-                );
-              })}
-            </div>
-          ))}
-        </nav>
-        <div className="rail__position" aria-label="Position summary">
-          <div className="rail__position-label">Position</div>
-          <div className="rail__position-row">
-            <span>Collateral</span>
-            <strong>
-              {formatAmount(snapshot.position.collateralLst, 2)} <small>stINJ</small>
-            </strong>
-          </div>
-          <div className="rail__position-row">
-            <span>Debt</span>
-            <strong>
-              {formatAmount(snapshot.position.debtQinj, 2)} <small>qINJ</small>
-            </strong>
-          </div>
-          <div className="rail__position-row">
-            <span>LTV</span>
-            <strong>
-              {(snapshot.metrics.ltvBps / 100).toFixed(1)}% <small>of {(snapshot.config.maxLtvBps / 100).toFixed(0)}% max</small>
-            </strong>
-          </div>
-        </div>
-        <div className="rail__foot">
-          <button type="button" className="rail__utility" onClick={openSources}>
-            <Info size={18} weight="regular" aria-hidden="true" />
-            <span>Sources</span>
-          </button>
-          <div className="rail__account">
-            <span className="rail__account-dot" aria-hidden="true" />
-            <div>
-              <strong>Simulated account</strong>
-              <span>{shortAddress(snapshot.account.address)}</span>
-            </div>
-          </div>
-        </div>
-      </aside>
-
+      <div className="gas-pill" aria-hidden="true">
+        <span>Simulated · Testnet {snapshot.chainId}</span>
+      </div>
       <div className="app-body">
-        <header className="app-top">
-          <div className="app-top__crumb">
-            <span>Quench</span>
-            <span aria-hidden="true">/</span>
-            <strong>{title}</strong>
-          </div>
-          <div className="app-top__right">
-            <span className="network-chip">Testnet {snapshot.chainId}</span>
-            <RateStatusPill
-              status={snapshot.rate.status}
-              rate={`${(Number(snapshot.rate.value) / 1e18).toFixed(3)} INJ/stINJ`}
-            />
-            <button type="button" className="top-link top-link--sources" onClick={openSources}>
-              <ChartLineDown size={16} weight="regular" aria-hidden="true" />
-              Sources
-            </button>
-            <ThemeToggle />
-            <SimulatedBadge compact />
+        <header className="site-header">
+          <div className="site-header__inner">
+            <Wordmark to="/" />
+            <nav className="site-nav" aria-label="Quench sections">
+              {NAV.map((item) => (
+                <NavLink
+                  key={item.to}
+                  to={item.to}
+                  end={item.end}
+                  className={({ isActive }) => (isActive ? 'is-active' : '')}
+                  data-testid={`nav-${item.label.toLowerCase()}`}
+                >
+                  {item.label}
+                </NavLink>
+              ))}
+              <button type="button" onClick={openSources}>
+                Sources
+              </button>
+            </nav>
+            <div className="site-header__actions">
+              <span className="net-dot" title={`Injective Testnet ${snapshot.chainId}`} aria-label={`Injective Testnet ${snapshot.chainId}`}>
+                <span className="net-dot__icon" aria-hidden="true" />
+                testnet {snapshot.chainId}
+              </span>
+              <button type="button" className="top-link top-link--zl header-sources" onClick={openSources} aria-label="Sources">
+                <span>Sources</span>
+              </button>
+              <ThemeToggle />
+              <span className="wallet-pill">
+                <Wallet size={14} weight="bold" aria-hidden="true" />
+                {shortAddress(snapshot.account.address)}
+              </span>
+            </div>
           </div>
         </header>
 
         {wrong ? (
           <div className="app-banner">
-            <Banner
-              tone="danger"
-              title="Wrong network"
-              action={
-                <span className="banner__hint">
-                  Open <strong>Simulation</strong> to switch back to Injective Testnet 1439.
-                </span>
-              }
-            >
-              No action will be submitted while the network is wrong. No funds are at risk; this
-              is a simulated state.
+            <Banner tone="danger" title="Wrong network">
+              Switch back to Injective Testnet 1439 in Simulation.
             </Banner>
           </div>
         ) : null}
@@ -179,20 +115,16 @@ export function AppShell() {
       </div>
 
       <nav className="bottom-nav" aria-label="Quench sections">
-        {NAV.slice(0, 5).map((item) => {
-          const Icon = item.icon;
-          return (
-            <NavLink
-              key={item.to}
-              to={item.to}
-              end={item.end}
-              className={({ isActive }) => `bottom-nav__link${isActive ? ' is-active' : ''}`}
-            >
-              <Icon size={20} weight="regular" aria-hidden="true" />
-              <span>{item.label}</span>
-            </NavLink>
-          );
-        })}
+        {NAV.map((item) => (
+          <NavLink
+            key={item.to}
+            to={item.to}
+            end={item.end}
+            className={({ isActive }) => `bottom-nav__link${isActive ? ' is-active' : ''}`}
+          >
+            <span>{item.label}</span>
+          </NavLink>
+        ))}
       </nav>
 
       <TxPanel />

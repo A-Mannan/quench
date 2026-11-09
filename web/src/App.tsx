@@ -41,9 +41,9 @@ export default function App() {
         <Route path="/app" element={<AppShell />}>
           <Route index element={<Overview />} />
           <Route path="basin" element={<Basin />} />
-          <Route path="borrow" element={<Borrow />} />
-          <Route path="wellspring" element={<Wellspring />} />
-          <Route path="confluence" element={<Confluence />} />
+          <Route path="loans" element={<Borrow />} />
+          <Route path="positions" element={<Wellspring />} />
+          <Route path="swap" element={<Confluence />} />
           <Route path="activity" element={<Activity />} />
         </Route>
         <Route path="*" element={<NotFound />} />

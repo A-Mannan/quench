@@ -1,18 +1,12 @@
 import { useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { ArrowUpRight, Info, Warning } from '@phosphor-icons/react';
+import { ArrowUpRight } from '@phosphor-icons/react';
 import { useQuench, ONE } from '../client';
 import { formatAmount, formatPct, mulDiv, parseTokenInput } from '../client/math';
 import { useAction } from '../lib/useAction';
-import { AmountField } from '../components/AmountField';
 import { Banner } from '../components/Banner';
 import { Button, ButtonLink } from '../components/Button';
-import { Consequences } from '../components/Consequences';
-import { HeadroomBar } from '../components/HeadroomBar';
-import { PageHeader } from '../components/PageHeader';
-import { Panel } from '../components/Panel';
+import { InstrumentBar } from '../components/InstrumentBar';
 import { StateBanner } from '../components/StateBanner';
-import { Stat } from '../components/Stat';
 
 function maxMintFor(snapshot: ReturnType<typeof useQuench>['snapshot']): bigint {
   const maxDebt = snapshot.metrics.maxDebtInj;
@@ -50,13 +44,11 @@ export default function Borrow() {
   const collateralValueAfter = mulDiv(collateralAfter, snapshot.rate.value, ONE);
   const maxDebtAfter = mulDiv(collateralValueAfter, BigInt(snapshot.config.maxLtvBps), 10_000n);
   const debtAfter = snapshot.position.debtQinj + amount;
-  const headroomAfter = maxDebtAfter > debtAfter ? maxDebtAfter - debtAfter : 0n;
-  const ltvAfter = collateralValueAfter === 0n ? 0 : Number((debtAfter * 10_000n) / collateralValueAfter);
   const blockedByPause = snapshot.protocol.pausedMints || snapshot.network === 'wrong';
   const canMint = !blockedByPause && amount > 0n && amount <= maxMint && debtAfter <= maxDebtAfter;
   const mintError =
     !blockedByPause && amount > 0n && amount > maxMint
-      ? `Above the ${formatAmount(maxMint, 2)} qINJ cap for this collateral. Lower the amount to enable minting.`
+      ? `Max ${formatAmount(maxMint, 2)} qINJ for this collateral.`
       : undefined;
 
   const mint = async () => {
@@ -66,24 +58,13 @@ export default function Borrow() {
     });
   };
 
-  return (
-    <div className="page">
-      <PageHeader
-        kicker="Borrow"
-        title="Mint qINJ against the Basin."
-        lede="qINJ is INJ-denominated. Debt rises by the amount minted; the mint fee leaves your stINJ collateral. Wellspring can only burn qINJ held in this wallet."
-        aside={
-          <div className="page-head__aside-stack">
-            <span className="mono page-head__aside-note">
-              max mint {formatAmount(maxMint, 2)} qINJ
-            </span>
-            <span className="mono page-head__aside-note">
-              {formatPct(snapshot.config.maxLtvBps)} max LTV
-            </span>
-          </div>
-        }
-      />
+  const setPct = (pct: number) => {
+    const v = (maxMint * BigInt(Math.round(pct * 100))) / 10000n;
+    setInput(formatAmount(v, 18));
+  };
 
+  return (
+    <div className="page-simple page-simple--narrow">
       <StateBanner />
       {error ? (
         <Banner tone="danger" title="Mint failed">
@@ -91,155 +72,97 @@ export default function Borrow() {
         </Banner>
       ) : null}
 
-      {snapshot.position.collateralLst === 0n ? (
-        <Panel meta="No collateral" title="Deposit first">
-          <div className="empty-inline">
+      <section className="card" aria-label="Loan">
+        <InstrumentBar crumb="Loan / 01" chainId={snapshot.chainId} />
+        <h2 className="loan-head">Loan</h2>
+
+        {snapshot.position.collateralLst === 0n ? (
+          <>
+            <p className="muted">Select the collateral asset first.</p>
+            <ButtonLink to="/app/basin" full size="lg">
+              Deposit stINJ
+            </ButtonLink>
+          </>
+        ) : (
+          <>
+            <span className="field-label">Collateral</span>
+            <div className="token-box">
+              <div className="token-box__row">
+                <span className="token-box__num">{formatAmount(snapshot.position.collateralLst, 2)}</span>
+                <span className="token-pill">
+                  <span className="token-ico" aria-hidden="true">◆</span> stINJ
+                </span>
+              </div>
+              <div className="token-box__sub">
+                <span>{formatAmount(snapshot.metrics.collateralValueInj, 2)} INJ</span>
+                <span>Balance: {formatAmount(snapshot.position.collateralLst, 2)} Max</span>
+              </div>
+            </div>
+
             <div>
-              <p>
-                There is nothing to borrow against yet. Deposit stINJ into the Basin, then come
-                back. The mint button stays disabled until the collateral exists.
-              </p>
-              <ButtonLink to="/app/basin" size="lg">
-                Deposit stINJ
-              </ButtonLink>
-            </div>
-            <div className="empty-inline__mark" aria-hidden="true">
-              0.00
-            </div>
-          </div>
-        </Panel>
-      ) : (
-        <div className="borrow-grid">
-          <div className="borrow-grid__main">
-            <Panel meta="Entry" title="Mint qINJ">
-              <AmountField
-                id="mint-amount"
-                label="qINJ to mint"
-                value={input}
-                onChange={setInput}
-                unit="qINJ"
-                maxLabel={`Max mint: ${formatAmount(maxMint, 2)} qINJ`}
-                onMax={() => setInput(formatAmount(maxMint, 18))}
-                helper="Debt rises by this amount. The mint fee is taken from stINJ collateral, not from qINJ."
-                error={mintError}
-                disabled={blockedByPause}
-                testId="mint-input"
-              />
-              <Consequences
-                items={[
-                  {
-                    label: 'You receive',
-                    value: `${formatAmount(amount, 2)} qINJ`,
-                    tone: 'success',
-                  },
-                  {
-                    label: 'Mint fee',
-                    value: `${formatAmount(feeLst, 4)} stINJ from collateral`,
-                    tone: 'muted',
-                  },
-                  {
-                    label: 'Debt after',
-                    value: `${formatAmount(debtAfter, 2)} qINJ`,
-                    tone: debtAfter > maxDebtAfter ? 'danger' : 'default',
-                  },
-                  {
-                    label: 'Headroom after',
-                    value: `${formatAmount(headroomAfter, 2)} INJ`,
-                    tone: headroomAfter === 0n ? 'danger' : 'success',
-                  },
-                  {
-                    label: 'LTV after',
-                    value: `${formatPct(ltvAfter)} of ${formatPct(snapshot.config.maxLtvBps)} max`,
-                    tone: ltvAfter > snapshot.config.maxLtvBps ? 'danger' : 'default',
-                  },
-                ]}
-              />
-
-              {blockedByPause ? (
-                <Banner tone="warn" title="Mints are paused" compact>
-                  The rate is {snapshot.rate.status} or the network is wrong. Exits remain open;
-                  the mint button re-enables when the rate is fresh and the network is testnet 1439.
-                </Banner>
-              ) : null}
-              {!blockedByPause && amount > maxMint ? (
-                <Banner tone="warn" title="Above the LTV bound" compact>
-                  Lower the amount or add collateral. The maximum after the fee is{' '}
-                  {formatAmount(maxMint, 2)} qINJ.
-                </Banner>
-              ) : null}
-
-              <Button
-                full
-                size="lg"
-                onClick={mint}
-                loading={busy === 'mint'}
-                disabled={!canMint}
-                data-testid="mint-submit"
-                iconRight={<ArrowUpRight size={18} weight="bold" aria-hidden="true" />}
-              >
-                Mint qINJ
-              </Button>
-            </Panel>
-
-            <HeadroomBar
-              debtQinj={debtAfter}
-              maxDebtInj={maxDebtAfter}
-              headroomInj={headroomAfter}
-              ltvBps={ltvAfter}
-              maxLtvBps={snapshot.config.maxLtvBps}
-            />
-          </div>
-
-          <aside className="borrow-grid__side">
-            <div className="stat-grid stat-grid--two">
-              <Stat
-                label="qINJ in wallet"
-                value={formatAmount(snapshot.position.qinjBalance, 2)}
-                unit="qINJ"
-                note="Wellspring burns this"
-              />
-              <Stat
-                label="Debt now"
-                value={formatAmount(snapshot.position.debtQinj, 2)}
-                unit="qINJ"
-                tone={snapshot.position.debtQinj > 0n ? 'danger' : 'default'}
-              />
-            </div>
-
-            <div className="instrument-note">
-              <div className="instrument-note__title">The consequence you must read</div>
-              <p>
-                If you move qINJ out of this wallet, Wellspring cannot burn it against your debt.
-                Automatic repayment slows or stops until qINJ returns. Confluence redemption does
-                not repay your Basin debt.
-              </p>
-              <Link to="/app/wellspring" className="text-link">
-                How repayment works
-              </Link>
-            </div>
-
-            <div className="instrument-note instrument-note--warn">
-              <div className="instrument-note__title">
-                <Warning size={14} weight="bold" aria-hidden="true" /> Not a leverage loop
+              <span className="field-label">How much you want to borrow?</span>
+              <div className={`token-box amount-field__control${mintError ? ' amount-field--error' : ''}`}>
+                <div className="token-box__row">
+                  <input
+                    id="mint-amount"
+                    className="amount-field__input"
+                    inputMode="decimal"
+                    autoComplete="off"
+                    spellCheck={false}
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    placeholder="0.00"
+                    disabled={blockedByPause}
+                    aria-invalid={mintError ? true : undefined}
+                    data-testid="mint-input"
+                  />
+                  <span className="token-pill">
+                    <span className="token-ico" aria-hidden="true">Q</span> qINJ
+                  </span>
+                </div>
+                <div className="token-box__sub">
+                  <span>Max {formatAmount(maxMint, 2)}</span>
+                  <span className="chips" role="group" aria-label="Quick amounts">
+                    <button type="button" className="chip" onClick={() => setPct(20)} disabled={blockedByPause}>
+                      20%
+                    </button>
+                    <button type="button" className="chip" onClick={() => setPct(30)} disabled={blockedByPause}>
+                      30%
+                    </button>
+                    <button type="button" className="chip" onClick={() => setInput(formatAmount(maxMint, 18))} disabled={blockedByPause}>
+                      Max
+                    </button>
+                  </span>
+                </div>
+                {mintError ? (
+                  <div className="amount-field__help amount-field__help--error" role="alert">{mintError}</div>
+                ) : null}
               </div>
-              <p>
-                This demo has one Basin and one synthetic. It does not model recursive leverage,
-                multi-collateral, or a market for qINJ beyond the simulated Confluence buffer.
-              </p>
             </div>
 
-            <div className="instrument-note">
-              <div className="instrument-note__title">
-                <Info size={14} weight="bold" aria-hidden="true" /> Rate source
-              </div>
-              <p>
-                Max mint is recalculated from the LST exchange rate. A stale or out-of-bounds rate
-                disables this form; it does not disable the exit.
-              </p>
+            <div className="mini-row">
+              <span>Debt after</span>
+              <strong>{formatAmount(debtAfter, 2)} qINJ</strong>
             </div>
-          </aside>
-        </div>
-      )}
+
+            <Button
+              full
+              size="lg"
+              onClick={mint}
+              loading={busy === 'mint'}
+              disabled={!canMint}
+              data-testid="mint-submit"
+              iconRight={<ArrowUpRight size={18} weight="bold" aria-hidden="true" />}
+            >
+              {amount > 0n ? `Borrow ${formatAmount(amount, 2)} qINJ` : 'Borrow qINJ'}
+            </Button>
+
+            <p className="fine">
+              {formatPct(snapshot.config.maxLtvBps)} max · Fee {formatAmount(feeLst, 4)} stINJ
+            </p>
+          </>
+        )}
+      </section>
     </div>
   );
 }

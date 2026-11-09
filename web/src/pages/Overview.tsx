@@ -1,44 +1,26 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, ArrowUpRight, CheckCircle, Warning } from '@phosphor-icons/react';
+import { ArrowClockwise } from '@phosphor-icons/react';
 import { useQuench, DAY_MS } from '../client';
-import { formatAmount, formatDateShort, formatPct, formatRate } from '../client/math';
+import { formatAmount, formatPct } from '../client/math';
 import type { CurvePoint } from '../domain/curve';
 import { projectCurve } from '../domain/curve';
 import { useAction } from '../lib/useAction';
 import { Banner } from '../components/Banner';
-import { BufferGauge } from '../components/BufferGauge';
-import { Button, ButtonLink } from '../components/Button';
+import { Button } from '../components/Button';
 import { EmptyPosition } from '../components/EmptyPosition';
-import { PageHeader } from '../components/PageHeader';
-import { Panel } from '../components/Panel';
+import { InstrumentBar } from '../components/InstrumentBar';
 import { PressureCurve } from '../components/PressureCurve';
 import { StateBanner } from '../components/StateBanner';
-import { Stat } from '../components/Stat';
 
 const MONTH_MS = 30.4375 * DAY_MS;
-
-function positionLabel(snapshot: ReturnType<typeof useQuench>['snapshot']): {
-  label: string;
-  tone: string;
-} {
-  if (snapshot.protocol.liquidated) return { label: 'Liquidated', tone: 'danger' };
-  if (snapshot.protocol.liquidationEligible) return { label: 'Liquidation eligible', tone: 'danger' };
-  if (snapshot.protocol.pausedMints) return { label: 'Paused', tone: 'warn' };
-  if (snapshot.position.debtQinj === 0n && snapshot.position.collateralLst > 0n) {
-    return { label: 'Debt cleared', tone: 'success' };
-  }
-  if (snapshot.metrics.ltvBps > snapshot.config.maxLtvBps * 0.7) {
-    return { label: 'Under pressure', tone: 'warn' };
-  }
-  return { label: 'Cooling', tone: 'ok' };
-}
 
 export default function Overview() {
   const { client, snapshot } = useQuench();
   const { busy, error, run } = useAction();
+  const [view, setView] = useState<'mine' | 'protocol'>('mine');
+  const [onlyActive, setOnlyActive] = useState(true);
   const hasPosition = snapshot.position.collateralLst > 0n || snapshot.position.debtQinj > 0n;
-  const status = positionLabel(snapshot);
   const yieldAvailable = snapshot.metrics.yieldSinceHarvestInj;
 
   const chart = useMemo(() => {
@@ -49,8 +31,7 @@ export default function Overview() {
       month: (point.t - first) / MONTH_MS,
       debt: Number(point.debt) / 1e18,
       collateral: Number(point.collateralValue) / 1e18,
-      maxDebt:
-        (Number(point.collateralValue) / 1e18) * (snapshot.config.maxLtvBps / 10_000),
+      maxDebt: (Number(point.collateralValue) / 1e18) * (snapshot.config.maxLtvBps / 10_000),
     }));
     const last = actual[actual.length - 1];
     if (!last || snapshot.position.debtQinj === 0n) {
@@ -73,259 +54,212 @@ export default function Overview() {
     };
   }, [snapshot]);
 
-  const harvest = () =>
-    run('harvest', () => client.harvest());
+  const harvest = () => run('harvest', () => client.harvest());
+  const ltv = snapshot.metrics.ltvBps;
+  const ltvPct = ltv / 100;
+  const ltvFill = Math.min(100, (ltv / snapshot.config.maxLtvBps) * 100);
+
+  if (!hasPosition) {
+    return (
+      <div className="page-simple">
+        <div className="simple-head">
+          <h1>A clean instrument.</h1>
+        </div>
+        <StateBanner />
+        {error ? (
+          <Banner tone="danger" title="Action failed">
+            {error}
+          </Banner>
+        ) : null}
+        <EmptyPosition />
+      </div>
+    );
+  }
+
+  const isActive = snapshot.position.debtQinj > 0n;
 
   return (
-    <div className="page page--overview">
-      <PageHeader
-        kicker="Overview"
-        title={hasPosition ? 'The debt is cooling.' : 'A clean instrument.'}
-        lede={
-          hasPosition
-            ? 'One Basin, one LST, one synthetic. The curve is the position: debt, collateral value, and the headroom that keeps the loan honest.'
-            : 'No collateral, no debt. Deposit stINJ to start the loop; every screen will show the consequence before you act.'
-        }
-        aside={
-          <div className="page-head__aside-stack">
-            <span className={`position-pill position-pill--${status.tone}`}>
-              <span className="position-pill__dot" aria-hidden="true" />
-              {status.label}
-            </span>
-            <span className="mono page-head__aside-note">
-              {snapshot.simulation ? formatDateShort(snapshot.simulation.now) : 'simulated clock'}
-            </span>
-          </div>
-        }
-      />
-
+    <div className="page-simple">
       <StateBanner />
-
       {error ? (
         <Banner tone="danger" title="Action failed">
           {error}
         </Banner>
       ) : null}
-
       {snapshot.protocol.liquidated ? (
         <Banner tone="danger" title="Position liquidated">
-          Collateral seized; {formatAmount(snapshot.protocol.badDebtInj, 2)} INJ recorded as bad
-          debt. This path is a simulation, not a production liquidation engine.
+          {formatAmount(snapshot.protocol.badDebtInj, 2)} INJ bad debt (simulated).
         </Banner>
       ) : null}
-
-      {hasPosition && snapshot.position.debtQinj === 0n && snapshot.position.collateralLst > 0n ? (
+      {snapshot.position.debtQinj === 0n && snapshot.position.collateralLst > 0n ? (
         <Banner
           tone="success"
           title="Debt is zero"
           action={
             <Link to="/app/basin" className="banner__link">
-              Withdraw collateral
+              Withdraw
             </Link>
           }
         >
-          The loan is fully cooled. Withdrawal is enabled even if mints or harvest are paused.
+          Exit is open.
+        </Banner>
+      ) : null}
+      {snapshot.position.debtQinj > 0n && snapshot.position.qinjBalance === 0n ? (
+        <Banner tone="warn" title="No qINJ in wallet">
+          Add qINJ back to auto-repay.
         </Banner>
       ) : null}
 
-      {hasPosition && snapshot.position.debtQinj > 0n && snapshot.position.qinjBalance === 0n ? (
-        <Banner tone="warn" title="Wellspring has no qINJ to burn">
-          Automatic repayment only burns qINJ held in this wallet. If you moved qINJ out, bring it
-          back or use Confluence to understand the exit.
-        </Banner>
-      ) : null}
-
-      {hasPosition ? (
-        <>
-          <div className="overview-grid">
-            <div className="overview-grid__main">
-              <div className="stat-grid stat-grid--four">
-                <Stat
-                  label="Debt"
-                  value={formatAmount(snapshot.position.debtQinj, 2)}
-                  unit="qINJ"
-                  tone={snapshot.position.debtQinj > 0n ? 'danger' : 'success'}
-                  size="lg"
-                />
-                <Stat
-                  label="Collateral"
-                  value={formatAmount(snapshot.position.collateralLst, 2)}
-                  unit="stINJ"
-                  note={`${formatAmount(snapshot.metrics.collateralValueInj, 2)} INJ at ${formatRate(snapshot.rate.value)}`}
-                  size="lg"
-                />
-                <Stat
-                  label="Headroom"
-                  value={formatAmount(snapshot.metrics.headroomInj, 2)}
-                  unit="INJ"
-                  note={`${formatPct(snapshot.metrics.ltvBps)} LTV of ${formatPct(snapshot.config.maxLtvBps)} max`}
-                  tone={snapshot.metrics.ltvBps > snapshot.config.maxLtvBps * 0.8 ? 'danger' : 'accent'}
-                  size="lg"
-                />
-                <Stat
-                  label="qINJ in wallet"
-                  value={formatAmount(snapshot.position.qinjBalance, 2)}
-                  unit="qINJ"
-                  note="Wellspring can burn this against debt"
-                  size="lg"
-                />
+      <div className="dash-grid">
+        <section className="card" aria-label="Loan">
+          <InstrumentBar crumb="Loan / 01" chainId={snapshot.chainId} />
+          <div className="seg" role="tablist" aria-label="Stats view">
+            <button
+              type="button"
+              role="tab"
+              aria-selected={view === 'mine'}
+              className={`seg__item${view === 'mine' ? ' is-active' : ''}`}
+              onClick={() => setView('mine')}
+            >
+              My Stats
+            </button>
+            <button
+              type="button"
+              role="tab"
+              aria-selected={view === 'protocol'}
+              className={`seg__item${view === 'protocol' ? ' is-active' : ''}`}
+              onClick={() => setView('protocol')}
+            >
+              Protocol Stats
+            </button>
+          </div>
+          <h2 className="loan-head">Loan</h2>
+          {view === 'mine' ? (
+            <>
+              <div className="loan-field">
+                <span className="k">
+                  Collateral
+                </span>
+                <span className="v">{formatAmount(snapshot.position.collateralLst, 2)} stINJ</span>
+                <span className="s">Basin position</span>
               </div>
-
-              <Panel
-                className="chart-panel"
-                meta="Position / live simulation"
-                title="Pressure curve"
-                action={
-                  <span className="panel__hint">
-                    {snapshot.rate.status === 'fresh' ? 'Rate fresh' : snapshot.rate.status}
-                  </span>
-                }
-              >
-                <PressureCurve
-                  points={chart.points}
-                  currentMonth={chart.currentMonth}
-                  eyebrow="Actual history + projection"
-                  caption={`Actual simulation points plus a projection at ${formatPct(
-                    snapshot.rate.aprBps,
-                  )} APR. The rate source is in Sources. This is not a forecast.`}
-                  ariaLabel="Debt history and projected debt reduction for the current Basin position"
-                />
-              </Panel>
-
-              <div className="action-strip">
-                <div className="action-strip__copy">
-                  <div className="kicker">Next action</div>
-                  <strong>
-                    {yieldAvailable > 0n && snapshot.position.debtQinj > 0n
-                      ? `${formatAmount(yieldAvailable, 2)} INJ of yield is waiting.`
-                      : snapshot.position.debtQinj === 0n
-                        ? 'Debt is zero. The exit is open.'
-                        : 'No yield is waiting yet. Advance the clock or check the rate.'}
-                  </strong>
+              <div className="loan-field">
+                <span className="k">
+                  Current debt
+                </span>
+                <span className="v">{formatAmount(snapshot.position.debtQinj, 2)} qINJ</span>
+                <span className="s">1 opened position</span>
+              </div>
+              <div className="loan-field">
+                <span className="k">
+                  LTV
+                </span>
+                <span className="v">
+                  {ltvPct.toFixed(1)}% of {formatPct(snapshot.config.maxLtvBps)} max
+                </span>
+                <span className="s">No liquidation risk</span>
+              </div>
+              <div className="progress" aria-hidden="true">
+                <span style={{ width: `${ltvFill}%` }} />
+              </div>
+              {yieldAvailable > 0n && isActive ? (
+                <div className="loan-actions">
+                  <Button
+                    onClick={harvest}
+                    loading={busy === 'harvest'}
+                    disabled={snapshot.protocol.pausedHarvest || snapshot.network === 'wrong'}
+                    iconRight={<ArrowClockwise size={16} weight="bold" aria-hidden="true" />}
+                  >
+                    Harvest {formatAmount(yieldAvailable, 2)} INJ
+                  </Button>
                 </div>
-                <div className="action-strip__buttons">
-                  {yieldAvailable > 0n && snapshot.position.debtQinj > 0n ? (
-                    <Button
-                      onClick={harvest}
-                      loading={busy === 'harvest'}
-                      disabled={snapshot.protocol.pausedHarvest || snapshot.network === 'wrong'}
-                      iconRight={<ArrowUpRight size={16} weight="bold" aria-hidden="true" />}
-                    >
-                      Harvest yield
-                    </Button>
-                  ) : null}
-                  <ButtonLink to="/app/borrow" variant="secondary">
-                    Mint qINJ
-                  </ButtonLink>
-                  <ButtonLink to="/app/confluence" variant="secondary">
-                    Redeem qINJ
-                  </ButtonLink>
-                  {snapshot.position.debtQinj === 0n ? (
-                    <ButtonLink to="/app/basin" variant="secondary">
-                      Withdraw
-                    </ButtonLink>
-                  ) : null}
-                </div>
+              ) : null}
+            </>
+          ) : (
+            <>
+              <div className="loan-field">
+                <span className="k">
+                  TVL
+                </span>
+                <span className="v">{formatAmount(snapshot.metrics.collateralValueInj, 2)} INJ</span>
+                <span className="s">Basin collateral</span>
+              </div>
+              <div className="loan-field">
+                <span className="k">
+                  Total debt
+                </span>
+                <span className="v">{formatAmount(snapshot.position.debtQinj, 2)} qINJ</span>
+                <span className="s">1 opened position</span>
+              </div>
+              <div className="loan-field">
+                <span className="k">
+                  Confluence buffer
+                </span>
+                <span className="v">{formatAmount(snapshot.protocol.bufferLst, 2)} stINJ</span>
+                <span className="s">{formatAmount(snapshot.protocol.queuedLst, 2)} queued</span>
+              </div>
+            </>
+          )}
+        </section>
+
+        <section className="card card--chart" aria-label="Statistics">
+          <InstrumentBar crumb="Statistics / 01" chainId={snapshot.chainId} />
+          <div className="card__head">
+            <h2>Statistics</h2>
+          </div>
+          <PressureCurve
+            points={chart.points}
+            currentMonth={chart.currentMonth}
+            eyebrow="Debt projection"
+            ariaLabel="Debt history and projected debt reduction for the current Basin position"
+          />
+        </section>
+      </div>
+
+      <section className="card" aria-label="Your positions">
+        <InstrumentBar crumb="Positions / 01" chainId={snapshot.chainId} />
+        <div className="card__head">
+          <h2>
+            Your positions <span className="count-badge" aria-label="1 position">1</span>
+          </h2>
+          <label className="check">
+            <input type="checkbox" checked={onlyActive} onChange={(e) => setOnlyActive(e.target.checked)} />
+            Show only Active positions
+          </label>
+        </div>
+        {isActive || !onlyActive ? (
+          <div className="pos-row">
+            <span className="pos-row__icon" aria-hidden="true">
+              Q
+            </span>
+            <div>
+              <div className="pos-row__meta">
+                <span>
+                  <strong>BASIN</strong> · stINJ
+                </span>
+                <span>{ltvPct.toFixed(0)}%</span>
+              </div>
+              <div className={`pos-bar ${snapshot.position.debtQinj === 0n ? 'pos-bar--blue' : 'pos-bar--green'}`}>
+                <span style={{ width: `${snapshot.position.debtQinj === 0n ? 100 : ltvFill}%` }} />
               </div>
             </div>
-
-            <aside className="overview-grid__side">
-              <Panel className="side-panel" meta="Confluence" title="Exit liquidity">
-                <BufferGauge
-                  bufferLst={snapshot.protocol.bufferLst}
-                  targetLst={snapshot.protocol.bufferTargetLst}
-                  queuedLst={snapshot.protocol.queuedLst}
-                  compact
-                />
-                <p className="side-panel__note">
-                  Redemptions pay stINJ, not INJ. Worst case is {snapshot.config.redemptionDelayDays}{' '}
-                  days if the buffer is empty.
-                </p>
-                <Link to="/app/confluence" className="text-link">
-                  Open Confluence
-                  <ArrowRight size={14} weight="bold" aria-hidden="true" />
-                </Link>
-              </Panel>
-
-              <Panel className="side-panel" meta="Rate" title="Oracle reading">
-                <div className="rate-readout">
-                  <div>
-                    <span>Exchange rate</span>
-                    <strong>{formatRate(snapshot.rate.value)}</strong>
-                    <small>INJ per stINJ</small>
-                  </div>
-                  <div>
-                    <span>Assumed APR</span>
-                    <strong>{formatPct(snapshot.rate.aprBps)}</strong>
-                    <small>scenario input</small>
-                  </div>
-                </div>
-                <div className="rate-readout__foot">
-                  <span>Updated {formatDateShort(snapshot.rate.updatedAt)}</span>
-                  <span>Stale after {snapshot.config.staleAfterDays}d</span>
-                </div>
-              </Panel>
-
-              <Panel
-                className="side-panel"
-                meta="Ledger"
-                title="Recent activity"
-                action={
-                  <Link to="/app/activity" className="panel__hint">
-                    All
-                  </Link>
-                }
-              >
-                {snapshot.events.length === 0 ? (
-                  <p className="side-panel__note">No events yet. Your first deposit will appear here.</p>
-                ) : (
-                  <ul className="mini-ledger">
-                    {snapshot.events.slice(-5).reverse().map((event) => (
-                      <li key={event.id} className="mini-ledger__item">
-                        <span className={`mini-ledger__icon mini-ledger__icon--${event.status}`}>
-                          {event.status === 'confirmed' ? (
-                            <CheckCircle size={14} weight="fill" aria-hidden="true" />
-                          ) : (
-                            <Warning size={14} weight="fill" aria-hidden="true" />
-                          )}
-                        </span>
-                        <div>
-                          <strong>{event.title}</strong>
-                          <span>{formatDateShort(event.at)}</span>
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </Panel>
-            </aside>
+            <span className={`pos-status ${snapshot.position.debtQinj === 0n ? 'pos-status--matured' : 'pos-status--active'}`}>
+              <i aria-hidden="true" />
+              {snapshot.position.debtQinj === 0n ? 'Matured' : 'Active'}
+            </span>
           </div>
-        </>
-      ) : (
-        <>
-          <EmptyPosition />
-          <div className="empty-stats">
-            <Stat
-              label="Simulated wallet"
-              value={formatAmount(snapshot.position.walletLst, 2)}
-              unit="stINJ"
-              note="Demo balance. No real funds."
-            />
-            <Stat
-              label="Exchange rate"
-              value={formatRate(snapshot.rate.value)}
-              unit="INJ/stINJ"
-              note={`${formatPct(snapshot.rate.aprBps)} APR assumption`}
-            />
-            <Stat
-              label="Confluence buffer"
-              value={formatAmount(snapshot.protocol.bufferLst, 0)}
-              unit="stINJ"
-              note={`${formatAmount(snapshot.protocol.queuedLst, 0)} queued`}
-            />
-          </div>
-        </>
-      )}
+        ) : (
+          <p className="muted position-none">No active positions.</p>
+        )}
+        <div className="mini-row">
+          <span>qINJ in wallet</span>
+          <strong>{formatAmount(snapshot.position.qinjBalance, 2)} qINJ</strong>
+        </div>
+        <div className="mini-row">
+          <span>Buffer</span>
+          <strong>{formatAmount(snapshot.protocol.bufferLst, 0)} stINJ</strong>
+        </div>
+      </section>
     </div>
   );
 }

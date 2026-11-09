@@ -14,7 +14,7 @@ import { PROTOCOL_CONFIG } from '../client';
 import { monthsToZero, projectCurve } from '../domain/curve';
 
 const LOOP_STATEMENT =
-  'Deposit stINJ. Mint qINJ. Staking yield burns the loan down. Redeem in LST; withdraw at zero debt.';
+  'Deposit stINJ. Mint qINJ. Staking yield burns the loan down. No liquidation risk. Redeem in LST; withdraw at zero debt.';
 
 const HERO_CURVE = projectCurve({
   collateralInj: 150,
@@ -486,9 +486,9 @@ export default function Landing() {
             <SectionHead
               index="06"
               kicker="Risk"
-              title="Pressure has a release valve."
+              title="No liquidation risk."
               id="risk-title"
-              lede="Quench is not “safe”. It is legible. Every risk state names the cause, the raw value and the exit that stays open."
+              lede="Debt only falls. Every state below names the cause, the raw value and the exit that stays open."
               inverse
             />
 
@@ -520,14 +520,14 @@ export default function Landing() {
               <div className="risk-row">
                 <span className="risk-row__index">03</span>
                 <div className="risk-row__state">
-                  <span className="risk-dot risk-dot--danger" aria-hidden="true" />
-                  Rate drop
+                  <span className="risk-dot risk-dot--ok" aria-hidden="true" />
+                  Debt only falls
                 </div>
                 <p>
-                  Collateral value falls. If debt crosses max LTV, the position is
-                  liquidation-eligible and the shortfall is shown, not hidden.
+                  Debt only falls as staking yield burns qINJ. If you want out, you self-liquidate
+                  by choice or redeem in stINJ — no forced sale, no penalty.
                 </p>
-                <span className="risk-row__exit">Redeem · liquidation path</span>
+                <span className="risk-row__exit">Self-liquidate · redeem · zero-debt exit</span>
               </div>
               <div className="risk-table__foot">
                 <span>Entries can pause. Redemption and withdrawal at zero debt cannot.</span>

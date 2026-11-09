@@ -14,7 +14,7 @@
   --ink: #0b0c0e;
   --ink-2: #2a2d33;
   --muted: #5d6470;
-  --muted-2: #79808b;
+  --muted-2: #5c6672;
   --line: rgba(20, 28, 70, 0.13);
   --line-strong: rgba(20, 28, 70, 0.26);
   --grid-line: rgba(20, 28, 70, 0.05);
@@ -38,7 +38,7 @@
   --info-line: rgba(31, 45, 230, 0.22);
   --warn-line: rgba(138, 97, 0, 0.24);
   --danger-line: rgba(217, 72, 15, 0.24);
-  --warn: #8a6100;
+  --warn: #7a5600;
   --warn-soft: rgba(154, 103, 0, 0.12);
   --success: #2f7d4a;
   --success-ink: #256b3d;

@@ -27,7 +27,7 @@ async function openPosition(page: Page): Promise<void> {
   await expect(page.getByTestId('deposit-submit')).toBeEnabled();
   await page.getByTestId('deposit-submit').click();
   await waitTx(page);
-  await page.goto('/app/borrow');
+  await page.goto('/app/loans');
   await page.getByTestId('mint-input').fill('90');
   await expect(page.getByTestId('mint-submit')).toBeEnabled();
   await page.getByTestId('mint-submit').click();
@@ -49,7 +49,7 @@ test('full simulated loop reaches zero debt and withdrawal', async ({ page }) =>
   await shot(page, 'app-empty.png');
   await openPosition(page);
 
-  await page.goto('/app/wellspring');
+  await page.goto('/app/positions');
   await page.getByTestId('sim-open').click();
   await page.getByTestId('sim-fast-365').click();
   await page.waitForTimeout(600);
@@ -57,7 +57,7 @@ test('full simulated loop reaches zero debt and withdrawal', async ({ page }) =>
   await expect(page.getByText('Pending repayment')).toBeVisible();
   await shot(page, 'wellspring.png');
 
-  await page.goto('/app/confluence');
+  await page.goto('/app/swap');
   await page.getByTestId('redeem-input').fill('10');
   await expect(page.getByTestId('redeem-submit')).toBeEnabled();
   await page.getByTestId('redeem-submit').click();
@@ -100,7 +100,7 @@ test('full simulated loop reaches zero debt and withdrawal', async ({ page }) =>
   await page.getByTestId('withdraw-submit').click();
   await waitTx(page);
 
-  await page.goto('/app/confluence');
+  await page.goto('/app/swap');
   await expect(page.getByText('Nothing to redeem')).toBeVisible();
 
   await page.goto('/app/activity');
@@ -161,13 +161,13 @@ test('stale rate pauses entries and keeps exits open', async ({ page }) => {
   await page.waitForTimeout(600);
   await page.keyboard.press('Escape');
 
-  await page.goto('/app/borrow');
+  await page.goto('/app/loans');
   await expect(page.getByTestId('state-banner')).toContainText('stale');
   await expect(page.getByTestId('mint-input')).toBeDisabled();
   await expect(page.getByTestId('mint-submit')).toBeDisabled();
   await shot(page, 'stale-rate.png');
 
-  await page.goto('/app/confluence');
+  await page.goto('/app/swap');
   await page.getByTestId('redeem-input').fill('5');
   await expect(page.getByTestId('redeem-submit')).toBeEnabled();
 });
@@ -178,7 +178,7 @@ test('rate drop marks liquidation eligibility and keeps redemption open', async 
   await page.getByTestId('deposit-input').fill('200');
   await page.getByTestId('deposit-submit').click();
   await waitTx(page);
-  await page.goto('/app/borrow');
+  await page.goto('/app/loans');
   await page.getByTestId('mint-input').fill('99');
   await page.getByTestId('mint-submit').click();
   await waitTx(page);
@@ -190,7 +190,7 @@ test('rate drop marks liquidation eligibility and keeps redemption open', async 
   await expect(page.getByTestId('state-banner')).toContainText('Liquidation-eligible');
   await shot(page, 'rate-drop.png');
 
-  await page.goto('/app/confluence');
+  await page.goto('/app/swap');
   await page.getByTestId('redeem-input').fill('5');
   await expect(page.getByTestId('redeem-submit')).toBeEnabled();
 });
@@ -203,7 +203,7 @@ test('queued redemption and liquidation eligibility', async ({ page }) => {
   await page.waitForTimeout(600);
   await page.keyboard.press('Escape');
 
-  await page.goto('/app/confluence');
+  await page.goto('/app/swap');
   await page.getByTestId('redeem-input').fill('5');
   await expect(page.getByText('This redemption will queue')).toBeVisible();
   await page.getByTestId('redeem-submit').click();
