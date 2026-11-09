@@ -1,0 +1,189 @@
+/* Quench v6 — The Calibrated Instrument.
+   Dealt palette: cool-grey-cobalt. Dealt pairing: Instrument Sans + DM Mono.
+   One accent, one ground family, one sharp radius family.
+   Day is a paper instrument; night is the same instrument under lab light. */
+:root {
+  color-scheme: light;
+
+  /* Ground and structure */
+  --bg: #edf0f6;
+  --bg-deep: #e2e8f4;
+  --surface: #dde4f2;
+  --card: #f8fafe;
+  --card-2: #e8edf7;
+  --ink: #0b0c0e;
+  --ink-2: #2a2d33;
+  --muted: #5d6470;
+  --muted-2: #79808b;
+  --line: rgba(20, 28, 70, 0.13);
+  --line-strong: rgba(20, 28, 70, 0.26);
+  --grid-line: rgba(20, 28, 70, 0.05);
+
+  /* The one accent: fill and text are separate so night stays legible. */
+  --accent: #1f2de6;
+  --accent-text: #1622b4;
+  --accent-strong: #1622b4;
+  --accent-soft: rgba(31, 45, 230, 0.1);
+  --accent-wash: rgba(31, 45, 230, 0.06);
+  --accent-ink: #ffffff;
+  --accent-on-dark: #9aa4ff;
+
+  /* Semantics only */
+  --heat: #d9480f;
+  --heat-ink: #a63a12;
+  --heat-soft: rgba(217, 72, 15, 0.1);
+  --heat-on-dark: #ff8a5c;
+  --danger-fill: #a63a12;
+  --danger-fill-hover: #8a2f0e;
+  --info-line: rgba(31, 45, 230, 0.22);
+  --warn-line: rgba(138, 97, 0, 0.24);
+  --danger-line: rgba(217, 72, 15, 0.24);
+  --warn: #8a6100;
+  --warn-soft: rgba(154, 103, 0, 0.12);
+  --success: #2f7d4a;
+  --success-ink: #256b3d;
+  --success-soft: rgba(47, 125, 74, 0.1);
+  --success-line: rgba(37, 107, 61, 0.3);
+
+  /* The inverse instrument ground: constant in both themes. */
+  --inv-bg: #0b0c0e;
+  --inv-surface: #17181a;
+  --inv-card: #1d1f22;
+  --inv-ink: #eef0f3;
+  --inv-muted: #9a9da3;
+  --inv-line: rgba(238, 240, 243, 0.16);
+  --inv-line-strong: rgba(238, 240, 243, 0.3);
+  --inv-accent: #eef0f3;
+  --inv-accent-ink: #0b0c0e;
+
+  /* Data graphics */
+  --chart-grid: rgba(11, 12, 14, 0.1);
+  --chart-headroom: rgba(31, 45, 230, 0.08);
+  --chart-debt: var(--accent);
+  --chart-collateral: var(--ink);
+  --chart-max: var(--heat);
+
+  /* Shadows */
+  --shadow-soft: 0 18px 48px rgba(11, 12, 14, 0.12);
+  --shadow-panel: 0 1px 2px rgba(11, 12, 14, 0.05), 0 10px 28px rgba(11, 12, 14, 0.07);
+  --shadow-frame: 10px 10px 0 var(--accent-wash);
+
+  /* Type */
+  --font-display: 'Instrument Sans Variable', 'Instrument Sans', system-ui, sans-serif;
+  --font-body: 'Instrument Sans Variable', 'Instrument Sans', system-ui, sans-serif;
+  --font-mono: 'DM Mono', ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+  --display-weight: 460;
+  --display-tracking: -0.032em;
+  --display-tracking-xl: -0.048em;
+
+  --text-xs: 0.75rem;
+  --text-sm: 0.8125rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.375rem;
+  --text-2xl: clamp(1.75rem, 3vw, 2.25rem);
+  --text-3xl: clamp(2.25rem, 4.5vw, 3.25rem);
+  --text-4xl: clamp(2.75rem, 6vw, 4.5rem);
+  --text-5xl: clamp(3.5rem, 7.5vw, 6rem);
+  --text-6xl: clamp(4rem, 9vw, 7.5rem);
+
+  /* Space */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --space-8: 4rem;
+  --space-9: 6rem;
+  --space-10: 8rem;
+
+  /* Frame */
+  --max-width: 1320px;
+  --gutter: clamp(1.25rem, 4vw, 3rem);
+  --nav: 72px;
+  --rail: 252px;
+  --top: 64px;
+  --bottom-nav: 68px;
+
+  /* Radius: one family, sharp — fintech, calibrated */
+  --radius-sm: 3px;
+  --radius-md: 6px;
+  --radius-lg: 10px;
+  --radius-xl: 14px;
+  --radius-pill: 999px;
+
+  --border: 1px solid var(--line);
+  --border-strong: 1px solid var(--line-strong);
+
+  /* Motion */
+  --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-enter: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-io: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-press: 90ms;
+  --dur-state: 160ms;
+  --dur-panel: 220ms;
+  --dur-hero: 900ms;
+
+  /* Layers */
+  --z-sim-trigger: 60;
+  --z-tx: 70;
+  --z-drawer: 80;
+}
+
+[data-theme='dark'] {
+  color-scheme: dark;
+
+  /* Night is lab light: blue-grey steps, blue-tinted rules, deep fills. */
+  --bg: #090b0f;
+  --bg-deep: #0c0f16;
+  --surface: #131824;
+  --card: #151a24;
+  --card-2: #1b2230;
+  --ink: #eef0f3;
+  --ink-2: #d3d9e1;
+  --muted: #a6aebb;
+  --muted-2: #8e97a3;
+  --line: rgba(165, 174, 255, 0.1);
+  --line-strong: rgba(165, 174, 255, 0.2);
+  --grid-line: rgba(165, 174, 255, 0.06);
+
+  --accent: #2e3bff;
+  --accent-text: #a5aeff;
+  --accent-strong: #1e2bd6;
+  --accent-soft: rgba(111, 125, 255, 0.18);
+  --accent-wash: rgba(111, 125, 255, 0.1);
+
+  --heat: #ff8a5c;
+  --heat-ink: #ffb199;
+  --heat-soft: rgba(255, 138, 92, 0.14);
+  --heat-on-dark: #ff8a5c;
+  --danger-fill: #c2410c;
+  --danger-fill-hover: #9a3412;
+  --info-line: rgba(154, 164, 255, 0.28);
+  --warn-line: rgba(230, 180, 80, 0.28);
+  --danger-line: rgba(255, 138, 92, 0.28);
+  --warn: #e6b450;
+  --warn-soft: rgba(230, 180, 80, 0.14);
+  --success: #7bd3a0;
+  --success-ink: #8fe0b0;
+  --success-soft: rgba(123, 211, 160, 0.12);
+  --success-line: rgba(123, 211, 160, 0.32);
+
+  --chart-grid: rgba(238, 240, 243, 0.14);
+  --chart-headroom: rgba(111, 125, 255, 0.16);
+  --chart-debt: #9aa4ff;
+  --chart-collateral: var(--ink);
+  --chart-max: #ff8a5c;
+
+  --shadow-soft: 0 18px 48px rgba(0, 0, 0, 0.45);
+  --shadow-panel: inset 0 1px 0 rgba(255, 255, 255, 0.04), 0 14px 36px rgba(0, 0, 0, 0.38);
+  --shadow-frame: 10px 10px 0 var(--accent-wash);
+
+  --inv-bg: #07080a;
+  --inv-surface: #0f1114;
+  --inv-card: #15171a;
+  --inv-line: rgba(238, 240, 243, 0.14);
+  --inv-line-strong: rgba(238, 240, 243, 0.26);
+}

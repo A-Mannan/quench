@@ -1,0 +1,28 @@
+# Secrets — never commit
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+*.keystore
+keystore/
+secrets/
+.secret
+
+# Dependencies
+node_modules/
+lib/
+
+# Foundry build output
+out/
+cache/
+broadcast/
+coverage/
+lcov.info
+forge-std/
+
+# OS / editor
+.DS_Store
+*.swp
+.idea/
+.vscode/

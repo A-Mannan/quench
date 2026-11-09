@@ -1,0 +1,4 @@
+schema: spec-driven
+created: 2026-11-09
+goal: Ship the real Quench UI with only integrations simulated; all BRIEF flows,
+  typed QuenchClient seam, tests and QA evidence

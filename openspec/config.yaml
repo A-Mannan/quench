@@ -1,0 +1,26 @@
+schema: spec-driven
+
+context: |
+  Quench: clean-room, testnet-only self-repaying loan protocol on Injective EVM (chain 1439).
+  One Basin vault accepts one yield-bearing INJ LST; users mint qINJ (INJ-denominated synthetic) up to collateralValue * maxLTV.
+  Wellspring measures LST exchange-rate yield and repays debt; Confluence redeems qINJ for LST units; zero debt unlocks collateral.
+  Fixed names: Quench, qINJ, Basin (vault), Wellspring (harvest/repayment), Confluence (redemption), QNCH (governance interface stub only).
+  Stack: Solidity + Foundry; Injective EVM precompiles; no CosmWasm.
+  Hard rules: testnet only; no real keys/funds; clean-room with no Alchemix code; cite sources or tag [DECISION]; no unapproved installs; timelocked admin; no unbacked qINJ mint; reentrancy guards; redemption never waits on 21-day unbonding.
+  Source docs: docs/BRIEF.md (verbatim), docs/research.md (claims register), docs/STATUS.md (session state), docs/RISKS.md (later).
+  Reading order: docs/STATUS.md -> openspec/changes/build-quench-mvp/tasks.md -> design.md -> docs/research.md -> docs/BRIEF.md.
+  Change: openspec/changes/build-quench-mvp.
+
+rules:
+  proposal:
+    - Every requirement cites a source or is tagged [DECISION].
+    - No copied Alchemix code.
+  design:
+    - Every requirement cites a source or is tagged [DECISION].
+    - No copied Alchemix code.
+  specs:
+    - Every requirement cites a source or is tagged [DECISION].
+    - No copied Alchemix code.
+  tasks:
+    - Every task names its evidence.
+    - No copied Alchemix code.

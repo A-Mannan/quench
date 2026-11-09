@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en" data-type="software">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="page-type" content="software" />
+    <meta name="site-kind" content="software" />
+    <meta
+      name="description"
+      content="Quench is a self-repaying loan demo on Injective EVM. Deposit stINJ, mint qINJ, and let staking yield burn the debt down."
+    />
+    <meta name="theme-color" content="#EDF0F6" />
+    <script>
+      (() => {
+        try {
+          const stored = localStorage.getItem('quench-theme');
+          const theme =
+            stored === 'dark' || stored === 'light'
+              ? stored
+              : window.matchMedia('(prefers-color-scheme: dark)').matches
+                ? 'dark'
+                : 'light';
+          document.documentElement.dataset.theme = theme;
+        } catch {
+          document.documentElement.dataset.theme = 'light';
+        }
+      })();
+    </script>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>Quench — borrow against stINJ</title>
+  </head>
+  <body>
+    <div id="root">
+      <div class="boot-splash" role="status" aria-live="polite">
+        <span class="boot-splash__mark">quench</span>
+        <span class="boot-splash__line">Pressurising the instrument…</span>
+      </div>
+    </div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

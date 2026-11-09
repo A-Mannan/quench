@@ -1,0 +1,25 @@
+{
+  "palettes": [
+    "warm-black-gold",
+    "cool-grey-cobalt"
+  ],
+  "types": [
+    "schibsted",
+    "instrument"
+  ],
+  "dealt": [
+    "schibsted",
+    "reddit",
+    "host",
+    "instrument",
+    "urbanist",
+    "funnel"
+  ],
+  "moments": [
+    {
+      "id": "letters-assemble",
+      "at": "2026-11-09T04:22:11.347Z",
+      "seed": "1b2a3680"
+    }
+  ]
+}
