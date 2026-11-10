@@ -19,8 +19,11 @@ node promo/capture.mjs
 # 3. Original score (48 kHz stereo) + VO mix (envelope-ducked) + loudness
 python3 promo/audio/score.py
 python3 promo/audio/mix.py
+# loudnorm is single-pass and can overshoot the true-peak ceiling; a limiter
+# after it holds the ceiling deterministically.
 ffmpeg -y -v error -i promo/audio/mix.wav \
-  -af "loudnorm=I=-15:TP=-1.5:LRA=11" -c:a pcm_s16le promo/audio/mix-final.wav
+  -af "loudnorm=I=-15:TP=-2:LRA=11,alimiter=limit=0.794:attack=5:release=50:level=disabled" \
+  -c:a pcm_s16le promo/audio/mix-final.wav
 
 # 4. Timeline gate (video-director, MIT)
 python3 /tmp/opencode/vet/repos/check_timeline.py promo/timeline.json

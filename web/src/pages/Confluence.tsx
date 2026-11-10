@@ -118,8 +118,8 @@ export default function Confluence() {
 
             {amount === 0n ? (
               <p className="info-bar">
-                Redeem qINJ for stINJ. Paid from the buffer, or queued up to{' '}
-                {snapshot.config.redemptionDelayDays} days.
+                Redeem qINJ for stINJ. Paid from the buffer, or queued for about{' '}
+                {snapshot.config.redemptionDelayDays} days. You can also sell qINJ on a DEX.
               </p>
             ) : willQueue ? null : (
               <p className="info-bar">
@@ -129,7 +129,7 @@ export default function Confluence() {
 
             {willQueue && amount > 0n ? (
               <Banner tone="warn" title="This redemption will queue" compact>
-                Buffer is short. Worst case {snapshot.config.redemptionDelayDays} days.
+                Buffer is short. Redemption takes about {snapshot.config.redemptionDelayDays} days.
               </Banner>
             ) : null}
 

@@ -33,7 +33,8 @@ re-dated, not re-measured.
   convolution reverb. `promo/audio/mix.py` places the VO, peak-normalises it, high-passes at 85 Hz,
   adds a presence lift and a short plate, and **ducks the music with a 40 ms-lookahead envelope
   follower** (~−8 dB under speech) instead of a static bed level. `render.sh` then normalises the
-  summed mix to −15 LUFS / −1.5 dBTP. Measured: **−15.42 LUFS integrated, −1.16 dBTP**.
+  summed mix to −15 LUFS, then a limiter holds the true-peak ceiling (single-pass
+  `loudnorm` alone can overshoot it). Measured: **−15.44 LUFS integrated, −1.65 dBTP**.
 - Captions burned in and `promo/captions.srt`, regenerated from the same cue table as the VO.
 - Transitions: **branded cobalt wipe** at every cut (0.66 s). A dark panel with cobalt leading and
   trailing edges covers the cut, then slides off to reveal the next screen. This replaced the
@@ -53,6 +54,9 @@ re-dated, not re-measured.
   score and mix rebuilt (previous bed was a bare sine pad at a static `volume=0.22`).
 - 2026-11-10 (v33): plain-language script, ElevenLabs male VO, dark trust panel, cobalt wipe,
   cobalt end card, no disclosure or `Assumptions, not promises.` anywhere in the film.
+- 2026-11-10 (v33b): the redemption line is plain — "Swap on a DEX, or redeem from us in about 7
+  days." — and the on-screen panel states both exits. The app copy was aligned to the same
+  wording ("worst case" is gone from the UI).
 
 ## Gates (pasted from `python3 promo/tools/qa.py promo/renders/quench-16x9-final.mp4 --out docs/promo/qa`)
 
@@ -69,7 +73,7 @@ re-dated, not re-measured.
 - WARN — frozen stretch: 36.3-40.0s (3.7s)
 - PASS — duplicate frames: 1 identical pairs
 - PASS — cuts vs plan: planned [3, 8, 13, 19, 21, 26, 32, 36]; detected [2.93, 7.93, 12.93, 18.93, 20.93, 25.93, 31.93, 36.03]; missing []
-- PASS — loudness / true peak: integrated -15.42 LUFS (target -15), true peak -1.16 dBTP (limit -1)
+- PASS — loudness / true peak: integrated -15.44 LUFS (target -15), true peak -1.65 dBTP (limit -1)
 - WARN — planned silence: planned 18.5-19.5s (music dip; VO speaks over it); long quiet windows []
 - PASS — unintended silence: []
 - PASS — text 'quench — Your yield pays the loan.' (hook): rendered 200px (floor 84), contrast 31.40:1 at t=1.6s
@@ -77,7 +81,7 @@ re-dated, not re-measured.
 - PASS — text '90.00 qINJ · LTV 45.10%' (term): rendered 100px (floor 48), contrast 17.11:1 at t=10.8s
 - PASS — text 'Positions: Debt 90.00 → 0.00 qINJ' (term): rendered 100px (floor 48), contrast 19.95:1 at t=16.5s
 - PASS — text 'Debt 0.00 qINJ — withdraw' (term): rendered 100px (floor 48), contrast 20.34:1 at t=23.0s
-- PASS — text 'Swap: 10 qINJ → 9.95 stINJ · worst' (term): rendered 100px (floor 48), contrast 18.09:1 at t=29.5s
+- PASS — text 'Swap: 10 qINJ → 9.95 stINJ · or re' (term): rendered 100px (floor 48), contrast 18.60:1 at t=29.5s
 - PASS — text 'APR 7.53% · fees 0.50% · LTV 50.00' (term): rendered 48px (floor 48), contrast 5.82:1 at t=34.5s
 - PASS — text 'Your yield pays the loan.' (end): rendered 240px (floor 48), contrast 2.80:1 at t=38.1s
 ```
@@ -105,7 +109,7 @@ First pass: REJECT. Message restated correctly from frames alone; ranked must-fi
 2. Disclosure illegible at phone size. → Fixed: 48 px bar, 25.70:1.
 3. Captions microtype at phone. → Fixed: 56 px rail.
 4. Frozen screenshots. → Partially fixed: fixed-scale pan + VO is the motion now; analysis still flags holds (see WARN justification).
-5. Horizon/phrasing ("Never 21-day unbonding" absolute). → Fixed: "Worst case, seven days"; horizons "· 1 year at 7.53%" / "Over 6 simulated years".
+5. Horizon/phrasing ("Never 21-day unbonding" absolute). → Fixed: "Redeem from us in about 7 days"; horizons "· 1 year at 7.53%" / "Over 6 simulated years".
 
 ## Honest limitations
 

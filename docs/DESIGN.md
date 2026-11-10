@@ -123,7 +123,7 @@ Plain verbs, sentence case, consequences before benefits. Examples:
 
 - "Mint qINJ" → helper: "Debt rises by the amount minted. The 0.50% fee leaves your stINJ collateral, so headroom is slightly lower."
 - "Harvest" → helper: "Wellspring burns qINJ from this wallet against your debt. Yield stays in the collateral."
-- "Redeem qINJ" → helper: "You receive stINJ, not INJ. Worst case is a 7-day queue if the buffer is empty."
+- "Redeem qINJ" → helper: "You receive stINJ, not INJ. Redemption takes about 7 days if the buffer is empty."
 - "Withdraw" → helper: "Only available at zero debt. Pausing never blocks this exit."
 
 Banned copy: "Safe", "Sustainable", "Next-generation", "Unlock the power", "Seamless", "Revolutionary", "Guaranteed", "Risk-free", "Audited" (unless a real audit is cited), invented TVL/users/partners, and any "✓ Safe" badge.
@@ -216,6 +216,7 @@ keys); they never reach the screen.
 | "Deposit a yield-bearing INJ LST into the Basin." | "Deposit stINJ as collateral." | film VO + captions, landing loop |
 | "Wellspring routes the staking yield to the debt." | "Your staking yield pays the debt automatically." | film VO + captions, `POSITIONS · AUTO-REPAY` |
 | "Redeem qINJ for LST units." | "Swap qINJ for stINJ." | film VO + captions |
+| "Worst case, seven days." | "Swap on a DEX, or redeem from us in about 7 days." | film VO + captions, app copy |
 | "Harvest" button | "Repay with yield" | Positions, Overview |
 | "Mint fee" / "Redeem fee" | "Borrow fee" / "Swap fee" | landing facts, sources drawer |
 | "The Basin is empty" | "No collateral yet" | Positions empty state |

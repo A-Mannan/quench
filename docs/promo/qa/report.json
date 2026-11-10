@@ -70,7 +70,7 @@
     {
       "level": "PASS",
       "check": "loudness / true peak",
-      "detail": "integrated -15.42 LUFS (target -15), true peak -1.16 dBTP (limit -1)"
+      "detail": "integrated -15.44 LUFS (target -15), true peak -1.65 dBTP (limit -1)"
     },
     {
       "level": "WARN",
@@ -109,13 +109,13 @@
     },
     {
       "level": "PASS",
-      "check": "text 'Swap: 10 qINJ \u2192 9.95 stINJ \u00b7 worst' (term)",
-      "detail": "rendered 100px (floor 48), contrast 18.09:1 at t=29.5s"
+      "check": "text 'Swap: 10 qINJ \u2192 9.95 stINJ \u00b7 or re' (term)",
+      "detail": "rendered 100px (floor 48), contrast 18.60:1 at t=29.5s"
     },
     {
       "level": "PASS",
       "check": "text 'APR 7.53% \u00b7 fees 0.50% \u00b7 LTV 50.00' (term)",
-      "detail": "rendered 48px (floor 48), contrast 5.82:1 at t=34.5s"
+      "detail": "rendered 48px (floor 48), contrast 5.96:1 at t=34.5s"
     },
     {
       "level": "PASS",

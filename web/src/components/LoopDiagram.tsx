@@ -93,7 +93,7 @@ function Fragment({ index }: { index: number }) {
       </div>
       <div className="circuit__fragment-foot">
         <span>Swap</span>
-        <span>worst case</span>
+        <span>about 7 days</span>
       </div>
     </div>
   );

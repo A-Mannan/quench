@@ -54,7 +54,7 @@ badge in the header), where it is honest and does not cost the film a frame.
 | 13–19 | Positions · Auto-repay | Position, counter 74.44 → 0.00 | The yield pays the debt | VO3 + rising arpeggio |
 | 19–21 | Zero (hero) | Counter hits 0.00; "Debt is zero." | Payoff | VO4 + hit |
 | 21–26 | Withdraw tab | Withdraw card, "Debt 0.00 qINJ" | Withdraw unlocks at zero | VO5 + release |
-| 26–32 | Swap (separate run) | Swap card, 10 qINJ → 9.95 stINJ, "in 7 days" | Redemption is LST with a worst case | VO6 + glass tap |
+| 26–32 | Exit · swap or redeem | Swap card, 10 qINJ → 9.95 stINJ, "From us in ~7 days · or on a DEX" | Two exits: redeem from us, or sell on a DEX | VO6 + glass tap |
 | 32–36 | Sources | Dark panel: APR 7.53%, 0.50% fees, 50.00% LTV, 500 stINJ | Every number has a source | VO7, sparse |
 | 36–40 | End card | Cobalt full-bleed: mark, wordmark, tagline | Your yield pays the loan | VO8 + resolve |
 
@@ -84,7 +84,7 @@ These are the exact sentences the voice speaks, in order.
 4. "Your staking yield pays the debt automatically."
 5. "Ninety qINJ falls to zero."
 6. "At zero debt, withdraw the collateral."
-7. "Swap qINJ for stINJ. Worst case, seven days."
+7. "Swap on a DEX, or redeem from us in about 7 days."
 8. "Every number has a source."
 
 ## Music direction

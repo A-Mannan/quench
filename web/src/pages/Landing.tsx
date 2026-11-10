@@ -388,7 +388,7 @@ export default function Landing() {
               kicker="Swap"
               title="Exits don’t wait for 21 days."
               id="exits-title"
-              lede="The swap buffer pays qINJ redemptions in stINJ. If the buffer is empty, the request queues; worst case is the configured delay. It never waits on Injective’s 21-day unbonding."
+              lede="Redeem qINJ for stINJ from the swap buffer, or sell it on a DEX. If the buffer is empty, the request queues for about the configured delay. It never waits on Injective’s 21-day unbonding."
             />
 
             <div className="exit-stage">
@@ -400,7 +400,7 @@ export default function Landing() {
                 <p>The route Quench does not use.</p>
               </div>
               <div className="exit-figure exit-figure--new">
-                <span className="exit-figure__label">Redemption worst case</span>
+                <span className="exit-figure__label">Redemption time</span>
                 <strong>
                   ≤7<span>days</span>
                 </strong>

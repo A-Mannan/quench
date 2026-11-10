@@ -67,7 +67,7 @@ export const SOURCES: Source[] = [
   },
   {
     id: 'redemption-delay',
-    label: 'Redemption worst case',
+    label: 'Redemption time',
     value: '7 days',
     source: '[DECISION: illustrative]',
     date: '2026-11-09',

@@ -32,7 +32,7 @@ LINES = {
     3: "Your staking yield pays the debt automatically.",
     4: "Ninety qINJ falls to zero.",
     5: "At zero debt, withdraw the collateral.",
-    6: "Swap qINJ for stINJ. Worst case, seven days.",
+    6: "Swap on a DEX, or redeem from us in about 7 days.",
     7: "Every number has a source.",
     8: "Quench. Your yield pays the loan.",
 }

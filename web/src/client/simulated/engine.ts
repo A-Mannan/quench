@@ -404,7 +404,7 @@ export function redeemState(state: SimState, amount: bigint): SimState {
   addEvent(next, {
     type: 'redeem',
     title: 'Redemption queued',
-    detail: `${lstOut / ONE} stINJ queued. Worst case ${PROTOCOL_CONFIG.redemptionDelayDays} days while the buffer refills. Not INJ, and not 21-day unbonding.`,
+    detail: `${lstOut / ONE} stINJ queued. Redemption takes about ${PROTOCOL_CONFIG.redemptionDelayDays} days while the buffer refills. Not INJ, and not 21-day unbonding.`,
     amount: lstOut,
     unit: 'stINJ',
     status: 'queued',

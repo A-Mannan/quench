@@ -282,3 +282,27 @@ with a hairline border; it only fills solid on hover. Verified in both themes fr
 **Gates (v33):** `pnpm typecheck` → 0; `pnpm lint` → 0; `pnpm build` → OK; `pnpm test` → **19/19**;
 `pnpm e2e` → **36/36 passed** (axe 0). `promo/renders/quench-16x9-final.mp4` re-rendered: 1920×1080,
 30 fps, 40.00 s, qa.py exit 0 with no FAIL.
+
+## V33b addendum (2026-11-10): the exit line, in plain words
+
+**User feedback:** "where it says about redemption worst time 7 days or something. dont complex
+user. instead tell it like it needs around 7 days for redemption. also make it say that user can
+wither swap from dex or redeem from us."
+
+"Worst case" is protocol language; a user wants to know how long they wait. The line is now
+**"Swap on a DEX, or redeem from us in about 7 days."** — one sentence, both exits named.
+
+- **Film:** VO line 6 regenerated with ElevenLabs (3.85 s, fits its 4.6 s window). Caption matches
+  it word for word. The 26–32 s panel is now `EXIT · SWAP OR REDEEM` with `10 qINJ → 9.95 stINJ`
+  and a sub-line `From us in ~7 days · or on a DEX`. The trust panel row `Swap worst case / 7 days`
+  became `Redeem from us / ~7 days`.
+- **App:** `worst case` is gone from every user-visible string — the Swap page says "queued for
+  about 7 days. You can also sell qINJ on a DEX", the queue banner says "Redemption takes about
+  7 days", the landing Exits section says "Redemption time" and names both routes, and the loop
+  diagram's foot reads "about 7 days".
+- **Audio:** the new line pushed true peak to −0.83 dBTP (over the −1 limit) because single-pass
+  `loudnorm` overshoots. `render.sh` now runs a limiter after `loudnorm`, holding the ceiling
+  deterministically. Measured: **−15.44 LUFS integrated, −1.65 dBTP**.
+
+**Gates (v33b):** `pnpm typecheck` → 0; `pnpm lint` → 0; `pnpm build` → OK; `pnpm test` → **19/19**;
+`pnpm e2e` → **36/36 passed** (axe 0). Film re-rendered: qa.py exit 0, no FAIL, cuts PASS.

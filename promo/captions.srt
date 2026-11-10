@@ -24,7 +24,7 @@ At zero debt, withdraw the collateral.
 
 7
 00:00:26,200 --> 00:00:30,800
-Swap qINJ for stINJ. Worst case, seven days.
+Swap on a DEX, or redeem from us in about 7 days.
 
 8
 00:00:31,200 --> 00:00:35,000

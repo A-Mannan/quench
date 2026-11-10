@@ -169,7 +169,7 @@
     },
     {
       "role": "term",
-      "text": "Swap: 10 qINJ → 9.95 stINJ · worst case 7 days",
+      "text": "Swap: 10 qINJ → 9.95 stINJ · or redeem in ~7 days",
       "from": 27,
       "to": 32,
       "px": 48,
@@ -241,7 +241,7 @@
     {
       "from": 26.2,
       "to": 30.8,
-      "text": "Swap qINJ for stINJ. Worst case, seven days."
+      "text": "Swap on a DEX, or redeem from us in about 7 days."
     },
     {
       "from": 31.2,
