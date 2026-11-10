@@ -14,7 +14,7 @@ import { PROTOCOL_CONFIG } from '../client';
 import { monthsToZero, projectCurve } from '../domain/curve';
 
 const LOOP_STATEMENT =
-  'Deposit stINJ. Mint qINJ. Staking yield burns the loan down. No liquidation risk. Redeem in LST; withdraw at zero debt.';
+  'Deposit stINJ. Borrow qINJ. Staking yield pays the loan down. No liquidation risk. Swap back to stINJ; withdraw at zero debt.';
 
 const HERO_CURVE = projectCurve({
   collateralInj: 150,
@@ -26,8 +26,8 @@ const HERO_CURVE = projectCurve({
 
 const HERO_FACTS = [
   { label: 'Max LTV', value: '50%' },
-  { label: 'Mint fee', value: '0.50%' },
-  { label: 'Redeem fee', value: '0.50%' },
+  { label: 'Borrow fee', value: '0.50%' },
+  { label: 'Swap fee', value: '0.50%' },
   { label: 'Worst exit', value: '≤ 7 days' },
   { label: 'Payout', value: 'stINJ' },
 ];
@@ -136,7 +136,7 @@ export default function Landing() {
                 {LOOP_STATEMENT}
               </p>
               <p className="hero__lede" data-enter>
-                Your staking yield burns the debt down. Your collateral keeps earning. Every
+                Your staking yield pays the debt down. Your collateral keeps earning. Every
                 consequence is on screen before you act.
               </p>
               <div className="hero__actions" data-enter>
@@ -157,7 +157,7 @@ export default function Landing() {
             <div className="hero__frame" data-enter>
               <div className="frame__bar">
                 <span className="frame__app">Quench</span>
-                <span className="frame__crumb">Basin</span>
+                <span className="frame__crumb">Position</span>
                 <span className="frame__net">testnet 1439</span>
               </div>
               <div className="frame__ruler" aria-hidden="true" />
@@ -300,8 +300,8 @@ export default function Landing() {
                   <div>
                     <div className="lab-readout__label">to zero debt / scenario only</div>
                     <div className="lab-readout__note">
-                      100 INJ collateral. 0.50% mint fee. Assumes the rate holds and the wallet keeps
-                      qINJ available for Wellspring to burn.
+                      100 INJ collateral. 0.50% borrow fee. Assumes the rate holds and the wallet keeps
+                      qINJ available to repay the debt.
                     </div>
                   </div>
                 </div>
@@ -385,10 +385,10 @@ export default function Landing() {
           <div className="wrap">
             <SectionHead
               index="04"
-              kicker="Confluence"
+              kicker="Swap"
               title="Exits don’t wait for 21 days."
               id="exits-title"
-              lede="Confluence pays qINJ redemptions in stINJ units from a buffer. If the buffer is empty, the request queues; worst case is the configured delay. It never waits on Injective’s 21-day unbonding."
+              lede="The swap buffer pays qINJ redemptions in stINJ. If the buffer is empty, the request queues; worst case is the configured delay. It never waits on Injective’s 21-day unbonding."
             />
 
             <div className="exit-stage">
@@ -400,7 +400,7 @@ export default function Landing() {
                 <p>The route Quench does not use.</p>
               </div>
               <div className="exit-figure exit-figure--new">
-                <span className="exit-figure__label">Confluence worst case</span>
+                <span className="exit-figure__label">Redemption worst case</span>
                 <strong>
                   ≤7<span>days</span>
                 </strong>
@@ -409,7 +409,7 @@ export default function Landing() {
             </div>
 
             <div className="exit-path">
-              <div className="exit-path__flow" aria-label="Confluence redemption flow">
+              <div className="exit-path__flow" aria-label="Redemption flow">
                 <div className="exit-path__node">
                   <span>You hold</span>
                   <strong>qINJ</strong>
@@ -418,7 +418,7 @@ export default function Landing() {
                   →
                 </span>
                 <div className="exit-path__node exit-path__node--accent">
-                  <span>Confluence</span>
+                  <span>Swap</span>
                   <strong>buffer</strong>
                 </div>
                 <span className="exit-path__arrow" aria-hidden="true">
@@ -460,7 +460,7 @@ export default function Landing() {
           <div className="wrap">
             <div className="moment__meta">
               <span>Debt, in one direction</span>
-              <span>Wellspring / 05</span>
+              <span>Auto-repay / 05</span>
             </div>
             <LiquidType
               id="moment-title"
@@ -469,7 +469,7 @@ export default function Landing() {
             />
             <div className="moment__foot">
               <p className="moment__sub">
-                No interest accrues. Wellspring burns qINJ from your wallet against the debt you
+                No interest accrues. Quench uses qINJ from your wallet to pay the debt you
                 owe, while the collateral keeps earning.
               </p>
               <p className="moment__note">
@@ -505,8 +505,8 @@ export default function Landing() {
                   <span className="risk-dot risk-dot--warn" aria-hidden="true" />
                   Rate stale
                 </div>
-                <p>Mints and harvest pause when the last rate update is older than seven days.</p>
-                <span className="risk-row__exit">Redeem · withdraw at zero debt</span>
+                <p>Borrowing and auto-repay pause when the last rate update is older than seven days.</p>
+                <span className="risk-row__exit">Swap · withdraw at zero debt</span>
               </div>
               <div className="risk-row">
                 <span className="risk-row__index">02</span>
@@ -515,7 +515,7 @@ export default function Landing() {
                   Rate out of bounds
                 </div>
                 <p>The exchange rate leaves the configured band. Entries pause; exits do not.</p>
-                <span className="risk-row__exit">Redeem · withdraw at zero debt</span>
+                <span className="risk-row__exit">Swap · withdraw at zero debt</span>
               </div>
               <div className="risk-row">
                 <span className="risk-row__index">03</span>
@@ -524,10 +524,10 @@ export default function Landing() {
                   Debt only falls
                 </div>
                 <p>
-                  Debt falls when staking yield burns qINJ or a manual repayment burns it. Redemption
-                  exchanges qINJ for stINJ; the Basin opens once debt reaches zero.
+                  Debt falls when staking yield is applied or you repay qINJ manually. The swap
+                  exchanges qINJ for stINJ; collateral unlocks once debt reaches zero.
                 </p>
-                <span className="risk-row__exit">Repay · redeem · zero-debt exit</span>
+                <span className="risk-row__exit">Repay · swap · zero-debt exit</span>
               </div>
               <div className="risk-table__foot">
                 <span>Entries can pause. Redemption and withdrawal at zero debt cannot.</span>
@@ -539,7 +539,7 @@ export default function Landing() {
               <p>Exits are never paused.</p>
               <div className="risk-footer">
                 <div>
-                  <strong>No admin mint.</strong> No path creates unbacked qINJ. Admin actions are
+                  <strong>No admin can create qINJ.</strong> No path creates unbacked qINJ. Admin actions are
                   timelocked in the protocol design.
                 </div>
                 <div>
@@ -563,7 +563,7 @@ export default function Landing() {
                   Open the instrument.
                 </h2>
                 <p className="close__lede">
-                  One Basin, one LST, one synthetic. Every flow works; the wallet, RPC and contracts
+                  One vault, one staking token, one synthetic. Every flow works; the wallet, RPC and contracts
                   are simulated. The protocol build is paused, and the UI says so.
                 </p>
               </div>

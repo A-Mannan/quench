@@ -15,7 +15,7 @@
     {
       "level": "PASS",
       "check": "frame 0",
-      "detail": "mean 17.5, std 27.6"
+      "detail": "mean 16.3, std 25.9"
     },
     {
       "level": "WARN",
@@ -25,52 +25,52 @@
     {
       "level": "WARN",
       "check": "frozen stretch",
-      "detail": "3.2-7.6s (4.4s)"
+      "detail": "3.4-7.5s (4.1s)"
     },
     {
       "level": "WARN",
       "check": "frozen stretch",
-      "detail": "8.2-12.4s (4.2s)"
+      "detail": "8.4-12.4s (4.0s)"
     },
     {
       "level": "WARN",
       "check": "frozen stretch",
-      "detail": "19.0-21.0s (2.0s)"
+      "detail": "19.3-20.8s (1.5s)"
     },
     {
       "level": "WARN",
       "check": "frozen stretch",
-      "detail": "21.6-25.6s (4.0s)"
+      "detail": "21.8-25.5s (3.6s)"
     },
     {
       "level": "WARN",
       "check": "frozen stretch",
-      "detail": "26.2-30.8s (4.6s)"
+      "detail": "26.4-30.8s (4.4s)"
     },
     {
       "level": "WARN",
       "check": "frozen stretch",
-      "detail": "32.0-35.0s (3.0s)"
+      "detail": "32.6-35.0s (2.4s)"
     },
     {
       "level": "WARN",
       "check": "frozen stretch",
-      "detail": "36.8-39.5s (2.7s)"
+      "detail": "36.3-40.0s (3.7s)"
     },
     {
-      "level": "WARN",
+      "level": "PASS",
       "check": "duplicate frames",
-      "detail": "16 identical pairs"
+      "detail": "1 identical pairs"
     },
     {
       "level": "PASS",
       "check": "cuts vs plan",
-      "detail": "planned [3, 8, 13, 19, 26, 32, 36]; detected [3.0, 8.0, 13.0, 19.0, 21.0, 26.0, 32.0, 36.0]; missing []"
+      "detail": "planned [3, 8, 13, 19, 21, 26, 32, 36]; detected [2.93, 7.93, 12.93, 18.93, 20.93, 25.93, 31.93, 36.03]; missing []"
     },
     {
       "level": "PASS",
       "check": "loudness / true peak",
-      "detail": "integrated -15.88 LUFS (target -15), true peak -1.35 dBTP (limit -1)"
+      "detail": "integrated -15.42 LUFS (target -15), true peak -1.16 dBTP (limit -1)"
     },
     {
       "level": "WARN",
@@ -84,43 +84,43 @@
     },
     {
       "level": "PASS",
-      "check": "text 'Simulated demo \u00b7 contracts not dep' (cta)",
-      "detail": "rendered 90px (floor 48), contrast 25.67:1 at t=20.1s"
-    },
-    {
-      "level": "PASS",
       "check": "text 'quench \u2014 Your yield pays the loan.' (hook)",
-      "detail": "rendered 200px (floor 84), contrast 31.29:1 at t=1.6s"
+      "detail": "rendered 200px (floor 84), contrast 31.40:1 at t=1.6s"
     },
     {
       "level": "PASS",
       "check": "text 'Loans: Add 200 stINJ \u00b7 borrow 90 q' (term)",
-      "detail": "rendered 100px (floor 48), contrast 15.82:1 at t=5.8s"
+      "detail": "rendered 100px (floor 48), contrast 16.11:1 at t=5.8s"
     },
     {
       "level": "PASS",
       "check": "text '90.00 qINJ \u00b7 LTV 45.10%' (term)",
-      "detail": "rendered 100px (floor 48), contrast 16.50:1 at t=10.8s"
+      "detail": "rendered 100px (floor 48), contrast 17.11:1 at t=10.8s"
     },
     {
       "level": "PASS",
       "check": "text 'Positions: Debt 90.00 \u2192 0.00 qINJ' (term)",
-      "detail": "rendered 100px (floor 48), contrast 19.47:1 at t=16.5s"
+      "detail": "rendered 100px (floor 48), contrast 19.95:1 at t=16.5s"
     },
     {
       "level": "PASS",
       "check": "text 'Debt 0.00 qINJ \u2014 withdraw' (term)",
-      "detail": "rendered 100px (floor 48), contrast 21.11:1 at t=23.0s"
+      "detail": "rendered 100px (floor 48), contrast 20.34:1 at t=23.0s"
     },
     {
       "level": "PASS",
       "check": "text 'Swap: 10 qINJ \u2192 9.95 stINJ \u00b7 worst' (term)",
-      "detail": "rendered 100px (floor 48), contrast 18.33:1 at t=29.5s"
+      "detail": "rendered 100px (floor 48), contrast 18.09:1 at t=29.5s"
     },
     {
       "level": "PASS",
-      "check": "text 'APR 7.53% assumption \u00b7 fees 0.50%' (term)",
-      "detail": "rendered 100px (floor 48), contrast 26.16:1 at t=34.5s"
+      "check": "text 'APR 7.53% \u00b7 fees 0.50% \u00b7 LTV 50.00' (term)",
+      "detail": "rendered 48px (floor 48), contrast 5.82:1 at t=34.5s"
+    },
+    {
+      "level": "PASS",
+      "check": "text 'Your yield pays the loan.' (end)",
+      "detail": "rendered 240px (floor 48), contrast 2.80:1 at t=38.1s"
     }
   ]
 }

@@ -1888,6 +1888,7 @@ html::-webkit-scrollbar-thumb:hover,
   .repay-inline .button { width: 100%; }
 }
 .pos-footer { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+.pos-footer .button { word-spacing: 0.14em; }
 .swap-empty { display: grid; gap: 0.6rem; }
 .swap-empty__title { font-size: 1.0625rem; font-weight: 600; letter-spacing: -0.02em; }
 .pos-exit { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 0.7rem 0.85rem; border: 1px solid var(--info-line); border-radius: var(--radius-sm); background: var(--accent-wash); }

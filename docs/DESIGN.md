@@ -196,3 +196,44 @@ Whole-surface audit (88 captures: landing + all six app screens × 4 widths × 2
 - No decorative indices: `Loans`, not `Loans / 01`. A number is printed only when it counts something real.
 - Arrows mean navigation. Transaction buttons are plain; `↗` is reserved for real external links (landing, sources).
 - Swap output is accented only when it has a value; at rest it is a plain field. Copy is buffer-aware (`Buffer covers this redemption`) instead of always promising 7 days.
+
+## V13 addendum (2026-11-10): every task gets a door
+
+- **Withdraw is a tab, not a footnote.** A first-class task does not live as a row under another screen's card. The rail/bottom nav is `Dashboard / Loans / Positions / Withdraw / Swap`; the route is `/app/withdraw` and `/app/basin` redirects there. The Positions footer keeps only `Swap qINJ | Self-liquidate`.
+- **Empty states still carry the next step.** `Nothing to withdraw` names the state and links to Loans; it does not disable into a dead end. The withdraw CTA is primary cobalt — the task is the point of the page, not an alternative.
+- **Nav is the source of truth for names.** If a screen is in the nav, it has a route, a heading, a crumb, and a matching page title. No hidden fifth destination reachable only from a card.
+- **Small labels need word spacing.** `Swap qINJ` at 12px read as one token; `word-spacing: 0.14em` on the Positions footer actions restores two words without changing the type size.
+
+## V14 addendum (2026-11-10): plain language, quiet danger
+
+**The rule:** the protocol's internal names — `Basin`, `Wellspring`, `Confluence`, `harvest` — are
+engineering vocabulary, not user vocabulary. A user meets *collateral*, *the protocol*, *the swap
+buffer* and *auto-repay*. The names stay in the codebase (component files, engine functions, metric
+keys); they never reach the screen.
+
+| Before | After | Where |
+|---|---|---|
+| "Deposit a yield-bearing INJ LST into the Basin." | "Deposit stINJ as collateral." | film VO + captions, landing loop |
+| "Wellspring routes the staking yield to the debt." | "Your staking yield pays the debt automatically." | film VO + captions, `POSITIONS · AUTO-REPAY` |
+| "Redeem qINJ for LST units." | "Swap qINJ for stINJ." | film VO + captions |
+| "Harvest" button | "Repay with yield" | Positions, Overview |
+| "Mint fee" / "Redeem fee" | "Borrow fee" / "Swap fee" | landing facts, sources drawer |
+| "The Basin is empty" | "No collateral yet" | Positions empty state |
+| "Confluence buffer drained" | "Swap buffer drained" | activity feed |
+| "qINJ minted" / "qINJ redeemed" | "qINJ borrowed" / "qINJ swapped" | activity feed |
+| "qINJ burned against the debt" | "qINJ applied to the debt" | activity feed |
+
+Token names (`stINJ`, `qINJ`) stay — they are the instruments themselves, and the app needs a
+symbol to be precise.
+
+**The danger action is quiet.** `Self-liquidate` was a solid burnt-orange block sitting next to a
+neutral secondary — the loudest object on a card whose real subject is a healthy position. A danger
+button should be available, not alarming. It now uses a heat-tinted surface (`--heat-soft` fill,
+`--danger-line` hairline, `--heat-ink` label) and only turns to a solid danger fill on hover. Same
+treatment in day and night.
+
+**The film is one system.** The trust scene was a white panel pasted onto a dark film — it read as a
+cropped screenshot rather than a designed frame. It is now a dark instrument panel (`#0E131C`, cobalt
+top rule, hairline rows, mono values) with the headline on the left. The end card is full-bleed
+cobalt with the mark and wordmark. Every cut is a branded wipe: a dark panel with cobalt leading and
+trailing edges covers the cut and slides away, replacing the crossfade that double-exposed panels.

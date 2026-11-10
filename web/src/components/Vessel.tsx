@@ -32,7 +32,7 @@ export function Vessel({
         </div>
       </div>
       <div className="vessel__foot">
-        <span>{sublabel ?? 'Basin pressure'}</span>
+        <span>{sublabel ?? 'Collateral pressure'}</span>
         <span>{safeFill.toFixed(0)}%</span>
       </div>
     </div>

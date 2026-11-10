@@ -49,20 +49,20 @@ export const SOURCES: Source[] = [
   },
   {
     id: 'mint-fee',
-    label: 'Mint fee',
+    label: 'Borrow fee',
     value: '0.50%',
     source: '[DECISION: illustrative]',
     date: '2026-11-09',
-    note: 'Taken from Basin collateral in LST; debt equals the qINJ minted.',
+    note: 'Taken from collateral in LST; debt equals the qINJ minted.',
     illustrative: true,
   },
   {
     id: 'redeem-fee',
-    label: 'Redeem fee',
+    label: 'Swap fee',
     value: '0.50%',
     source: '[DECISION: illustrative]',
     date: '2026-11-09',
-    note: 'Kept in the Confluence buffer; the user receives the net LST amount.',
+    note: 'Kept in the swap buffer; the user receives the net LST amount.',
     illustrative: true,
   },
   {
@@ -76,7 +76,7 @@ export const SOURCES: Source[] = [
   },
   {
     id: 'buffer',
-    label: 'Confluence buffer',
+    label: 'Swap buffer',
     value: '500 stINJ',
     source: '[DECISION: illustrative]',
     date: '2026-11-09',

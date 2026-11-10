@@ -46,7 +46,7 @@ export function BufferGauge({
       </div>
       <div className="buffer__foot">
         <span>{queuedLst > 0n ? `${formatAmount(queuedLst, 2)} stINJ queued` : 'No queue'}</span>
-        <span>{low ? 'Queue likely' : 'LST available'}</span>
+        <span>{low ? 'Queue likely' : 'stINJ available'}</span>
       </div>
     </div>
   );

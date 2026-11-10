@@ -388,14 +388,15 @@ h1 {
 }
 
 .button--danger {
-  background: var(--danger-fill);
-  border-color: var(--danger-fill);
-  color: #fff;
+  background: var(--heat-soft);
+  border-color: var(--danger-line);
+  color: var(--heat-ink);
 }
 
 .button--danger:hover:not(:disabled) {
-  background: var(--danger-fill-hover);
-  border-color: var(--danger-fill-hover);
+  background: var(--danger-fill);
+  border-color: var(--danger-fill);
+  color: #fff;
 }
 
 .button--sm {

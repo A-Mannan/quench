@@ -1,5 +1,5 @@
 import { lazy, Suspense } from 'react';
-import { Link, Route, Routes } from 'react-router-dom';
+import { Link, Navigate, Route, Routes } from 'react-router-dom';
 import { SimulatedBadge } from './components/SimulatedBadge';
 
 const Landing = lazy(() => import('./pages/Landing'));
@@ -40,9 +40,10 @@ export default function App() {
         <Route path="/" element={<Landing />} />
         <Route path="/app" element={<AppShell />}>
           <Route index element={<Overview />} />
-          <Route path="basin" element={<Basin />} />
+          <Route path="basin" element={<Navigate to="/app/withdraw" replace />} />
           <Route path="loans" element={<Borrow />} />
           <Route path="positions" element={<Wellspring />} />
+          <Route path="withdraw" element={<Basin />} />
           <Route path="swap" element={<Confluence />} />
           <Route path="activity" element={<Activity />} />
         </Route>

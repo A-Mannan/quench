@@ -4,7 +4,7 @@ import { formatAmount, formatPct, mulDiv, parseTokenInput } from '../client/math
 import { useAction } from '../lib/useAction';
 import { AmountField } from '../components/AmountField';
 import { Banner } from '../components/Banner';
-import { Button } from '../components/Button';
+import { Button, ButtonLink } from '../components/Button';
 import { InstrumentBar } from '../components/InstrumentBar';
 import { StateBanner } from '../components/StateBanner';
 
@@ -78,6 +78,24 @@ export default function Basin() {
     });
   };
 
+  if (snapshot.position.collateralLst === 0n) {
+    return (
+      <div className="page-simple page-simple--narrow">
+        <StateBanner />
+        <section className="card empty-simple" aria-label="Withdraw collateral">
+          <InstrumentBar crumb="Withdraw" chainId={snapshot.chainId} />
+          <h2>Nothing to withdraw</h2>
+          <p className="muted">
+            Add collateral from Loans first. Withdrawals stay open at zero debt.
+          </p>
+          <ButtonLink to="/app/loans" full size="lg">
+            Add collateral &amp; borrow
+          </ButtonLink>
+        </section>
+      </div>
+    );
+  }
+
   return (
     <div className="page-simple page-simple--narrow">
       <StateBanner />
@@ -88,7 +106,7 @@ export default function Basin() {
       ) : null}
 
       <section className="card" aria-label="Withdraw collateral">
-        <InstrumentBar crumb="Positions / withdraw" chainId={snapshot.chainId} />
+        <InstrumentBar crumb="Withdraw" chainId={snapshot.chainId} />
         <h2 className="loan-head">Withdraw</h2>
         <AmountField
           id="withdraw-amount"
@@ -149,7 +167,6 @@ export default function Basin() {
         <Button
           full
           size="lg"
-          variant="secondary"
           onClick={withdraw}
           loading={busy === 'withdraw'}
           disabled={!canWithdraw}

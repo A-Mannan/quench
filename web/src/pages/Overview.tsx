@@ -95,7 +95,7 @@ export default function Overview() {
           tone="success"
           title="Debt is zero"
           action={
-            <Link to="/app/basin" className="banner__link">
+            <Link to="/app/withdraw" className="banner__link">
               Withdraw
             </Link>
           }
@@ -169,7 +169,7 @@ export default function Overview() {
                     disabled={snapshot.protocol.pausedHarvest || snapshot.network === 'wrong'}
                     iconRight={<ArrowClockwise size={16} weight="bold" aria-hidden="true" />}
                   >
-                    Harvest {formatAmount(yieldAvailable, 2)} INJ
+                    Repay with {formatAmount(yieldAvailable, 2)} INJ
                   </Button>
                 </div>
               ) : null}

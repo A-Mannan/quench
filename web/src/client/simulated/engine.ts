@@ -216,7 +216,7 @@ export function depositState(state: SimState, amount: bigint): SimState {
   addEvent(next, {
     type: 'deposit',
     title: 'Collateral deposited',
-    detail: `${amount / ONE} stINJ moved into the Basin.`,
+    detail: `${amount / ONE} stINJ moved into the vault.`,
     amount,
     unit: 'stINJ',
     status: 'confirmed',
@@ -233,21 +233,21 @@ export function mintState(state: SimState, amount: bigint): SimState {
   const feeValue = bpsOf(amount, PROTOCOL_CONFIG.mintFeeBps);
   const feeLst = mulDiv(feeValue, ONE, next.rate);
   if (feeLst > next.collateralLst) {
-    throw new Error('The mint fee exceeds the Basin collateral. Add collateral first.');
+    throw new Error('The borrow fee exceeds the collateral. Add collateral first.');
   }
   next.collateralLst -= feeLst;
   next.treasuryLst += feeLst;
   const newDebt = next.debtQinj + amount;
   const maxDebt = maxDebtOf(next);
   if (newDebt > maxDebt) {
-    throw new Error('That mint would exceed the maximum LTV after the fee. Lower the amount or add collateral.');
+    throw new Error('That borrow would exceed the maximum LTV after the fee. Lower the amount or add collateral.');
   }
   next.debtQinj = newDebt;
   next.qinjBalance += amount;
   recordHistory(next, 'mint');
   addEvent(next, {
     type: 'mint',
-    title: 'qINJ minted',
+    title: 'qINJ borrowed',
     detail: `Debt rose by ${amount / ONE} qINJ; ${feeLst / ONE} stINJ fee left the collateral for the protocol.`,
     amount,
     unit: 'qINJ',
@@ -290,7 +290,7 @@ export function harvestState(state: SimState): SimState {
     addEvent(next, {
       type: 'harvest',
       title: 'No new yield',
-      detail: 'The exchange rate has not increased since the last harvest.',
+      detail: 'The exchange rate has not increased since the last repayment.',
       status: 'info',
     });
     return next;
@@ -308,11 +308,11 @@ export function harvestState(state: SimState): SimState {
     recordHistory(next, 'harvest');
     addEvent(next, {
       type: 'harvest',
-      title: 'Debt cooled',
+      title: 'Debt repaid',
       detail:
         repayable === yieldInj
-          ? `${repayable / ONE} qINJ burned against the debt. Yield stays in the collateral value.`
-          : `${repayable / ONE} qINJ burned. The wallet balance limited the burn; the rest stays in collateral value.`,
+          ? `${repayable / ONE} qINJ applied to the debt. Yield stays in the collateral value.`
+          : `${repayable / ONE} qINJ applied. The wallet balance limited the repayment; the rest stays in collateral value.`,
       amount: repayable,
       unit: 'qINJ',
       status: 'confirmed',
@@ -324,8 +324,8 @@ export function harvestState(state: SimState): SimState {
     next.lastHarvestRate = next.rate;
     addEvent(next, {
       type: 'harvest',
-      title: 'No debt to cool',
-      detail: 'Yield stays in the collateral value. Nothing was burned.',
+      title: 'No debt to repay',
+      detail: 'Yield stays in the collateral value. Nothing was applied.',
       status: 'info',
     });
     return next;
@@ -333,9 +333,9 @@ export function harvestState(state: SimState): SimState {
 
   addEvent(next, {
     type: 'harvest',
-    title: 'Yield available, no qINJ to burn',
+    title: 'Yield available, no qINJ to repay with',
     detail:
-      'Wellspring can only burn qINJ held in this wallet. The pending yield stays unharvested.',
+      'Repayment can only use qINJ held in this wallet. The pending yield stays unapplied.',
     status: 'warning',
   });
   return next;
@@ -358,7 +358,7 @@ export function repayState(state: SimState, amount: bigint): SimState {
   addEvent(next, {
     type: 'repay',
     title: 'qINJ repaid',
-    detail: `${amount / ONE} qINJ burned against the debt. Collateral unchanged.`,
+    detail: `${amount / ONE} qINJ applied to the debt. Collateral unchanged.`,
     amount,
     unit: 'qINJ',
     status: 'confirmed',
@@ -383,8 +383,8 @@ export function redeemState(state: SimState, amount: bigint): SimState {
     next.walletLst += lstOut;
     addEvent(next, {
       type: 'redeem',
-      title: 'qINJ redeemed',
-      detail: `${lstOut / ONE} stINJ paid from the Confluence buffer. Not INJ.`,
+      title: 'qINJ swapped',
+      detail: `${lstOut / ONE} stINJ paid from the swap buffer. Not INJ.`,
       amount: lstOut,
       unit: 'stINJ',
       status: 'confirmed',
@@ -419,7 +419,7 @@ export function withdrawState(state: SimState, amount: bigint): SimState {
     assertNotLiquidating(state, 'withdraw');
   }
   if (amount <= 0n) throw new Error('Enter an amount greater than zero.');
-  if (amount > state.collateralLst) throw new Error('Amount exceeds Basin collateral.');
+  if (amount > state.collateralLst) throw new Error('Amount exceeds collateral.');
   if (state.debtQinj > 0n) {
     const remainingCollateral = state.collateralLst - amount;
     const remainingValue = mulDiv(remainingCollateral, state.rate, ONE);
@@ -441,7 +441,7 @@ export function withdrawState(state: SimState, amount: bigint): SimState {
   addEvent(next, {
     type: 'withdraw',
     title: 'Collateral withdrawn',
-    detail: `${amount / ONE} stINJ returned from the Basin.`,
+    detail: `${amount / ONE} stINJ returned from the vault.`,
     amount,
     unit: 'stINJ',
     status: 'confirmed',
@@ -553,7 +553,7 @@ export function fastForwardState(state: SimState, days: number): SimState {
   addEvent(next, {
     type: 'rate',
     title: `Clock advanced ${days} days`,
-    detail: `Rate is now ${(Number(next.rate) / 1e18).toFixed(4)} INJ per stINJ. Wellspring harvested where it could.`,
+    detail: `Rate is now ${(Number(next.rate) / 1e18).toFixed(4)} INJ per stINJ. Quench applied yield where it could.`,
     status: 'info',
   });
   return next;
@@ -576,7 +576,7 @@ export function processQueueState(state: SimState): SimState {
       addEvent(next, {
         type: 'redeem',
         title: 'Queued redemption paid',
-        detail: `${live.lst / ONE} stINJ released from the Confluence buffer.`,
+        detail: `${live.lst / ONE} stINJ released from the swap buffer.`,
         amount: live.lst,
         unit: 'stINJ',
         status: 'confirmed',
@@ -597,7 +597,7 @@ export function dropRateState(state: SimState, bps: number): SimState {
   addEvent(next, {
     type: 'rate',
     title: `LST rate dropped ${(bps / 100).toFixed(2)}%`,
-    detail: `Rate is ${(Number(next.rate) / 1e18).toFixed(4)}. Mints and harvest paused; exits stay open.`,
+    detail: `Rate is ${(Number(next.rate) / 1e18).toFixed(4)}. Borrowing and auto-repay paused; exits stay open.`,
     status: 'warning',
   });
   return next;
@@ -624,7 +624,7 @@ export function makeStaleState(state: SimState): SimState {
   addEvent(next, {
     type: 'rate',
     title: 'Rate is stale',
-    detail: `No rate update for more than ${PROTOCOL_CONFIG.staleAfterDays} days. Mints and harvest paused; exits open.`,
+    detail: `No rate update for more than ${PROTOCOL_CONFIG.staleAfterDays} days. Borrowing and auto-repay paused; exits open.`,
     status: 'warning',
   });
   return next;
@@ -649,7 +649,7 @@ export function drainBufferState(state: SimState): SimState {
   next.bufferLst = 0n;
   addEvent(next, {
     type: 'rate',
-    title: 'Confluence buffer drained',
+    title: 'Swap buffer drained',
     detail: 'The simulated LST buffer is empty. Redemptions will queue.',
     status: 'warning',
   });
@@ -661,7 +661,7 @@ export function fundBufferState(state: SimState, amount: bigint): SimState {
   next.bufferLst += amount;
   addEvent(next, {
     type: 'rate',
-    title: 'Confluence buffer funded',
+    title: 'Swap buffer funded',
     detail: `${amount / ONE} stINJ added to the simulated buffer.`,
     status: 'info',
   });

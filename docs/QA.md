@@ -239,3 +239,46 @@ User: "shrink the info inside the positions and loans widget. its getting too lo
 - **Repay proportion:** a stretched `size="sm"` button read as a square; now 96×46 inline, full-width below 480px.
 
 **Gates (v31):** `pnpm typecheck` → 0; `pnpm lint` → 0; `pnpm build` → OK; `pnpm test` → **19/19**; `pnpm e2e` → **33/33 passed** (axe 0). Film re-rendered from fresh 2× captures; measured gates in `docs/promo/QA.md`. `build-quench-mvp` untouched.
+
+## V32 addendum (2026-11-10): Withdraw becomes a tab, and the film gets a real score
+
+**User feedback:** "why have you added withdraw btn in the end if positions widget? we could just add a new tab for withdraw?" and "update the promo and also use good sound. this one is not good."
+
+**Withdraw tab.** The contextual `Withdraw` row at the bottom of Positions was the wrong home for a first-class task: it read as a footnote to a position card. Withdraw now lives in the primary nav — `Dashboard / Loans / Positions / Withdraw / Swap` — with its own route (`/app/withdraw`), page heading, and crumb. `/app/basin` redirects to `/app/withdraw` so old links keep working. The empty state says `Nothing to withdraw` and offers a CTA to Loans; the CTA is primary cobalt (`Withdraw stINJ`), not a secondary button. The Overview zero-debt next-action links to `/app/withdraw`. The Positions footer is now just `Swap qINJ | Self-liquidate`, with `word-spacing: 0.14em` on those 12px labels so `Swap qINJ` reads as two words.
+
+**E2E coverage.** New test `withdraw tab opens the partial exit while debt remains` (12 tests × 3 viewports = **36/36**). It opens a 200 stINJ / 90 qINJ position, clicks `nav-withdraw`, asserts `/app/withdraw`, the `Withdraw` heading and the `Safe withdrawal N stINJ` copy, and asserts the empty state (`Nothing to withdraw`) with no position. Bottom-nav links gained a matching `data-testid` (`nav-<label>`) so the same locator works at tablet/mobile, where the rail is hidden.
+
+**Sound.** The old promo bed was a bare sine pad at a static `volume=0.22`; it read as a test tone. Replaced with a deterministic stereo score (`promo/audio/score.py`, A minor, 120 BPM, pad/sub/bass/arp/drums/lead/piano/riser/impact, sidechain + convolution reverb) and a proper mix step (`promo/audio/mix.py`) that peak-normalises the VO, high-passes it at 85 Hz, adds presence and a short plate, and ducks the music with a 40 ms-lookahead envelope follower instead of a fixed level. The film measures **−15.32 LUFS integrated, −1.36 dBTP** and qa.py still reports PASS on spec, cuts, text contrast and unintended silence. Details in `docs/promo/QA.md`; the score is original work with no third-party samples (`docs/promo/ASSETS.md`).
+
+**Gates (v32):** `pnpm typecheck` → 0; `pnpm lint` → 0; `pnpm build` → OK; `pnpm test` → **19/19**; `pnpm e2e` → **36/36 passed** (axe 0). Film re-rendered from fresh 2× captures; `promo/renders/quench-16x9-final.mp4` 1920×1080 30 fps 40.00 s. `build-quench-mvp` untouched.
+
+## V33 addendum (2026-11-10): plain language, male VO, rebuilt trust scene
+
+**User feedback (three rounds):** "the subtitles still have unfamiliar terms and dont match the
+voiceover"; "also use a mail voice. use eleven labs to generate voice and text to speech";
+"the 'every number has a source' screen does not look good. its white in dark. looks like someone
+pasted a crop image or something"; "self-liquidate btn color is looking odd no?"
+
+**Terminology sweep.** Every user-visible string in `web/src` and in the film was audited for
+protocol jargon. `Basin`, `Wellspring`, `Confluence` and `harvest` are gone from the screen; they
+remain only as internal identifiers (`pages/Basin.tsx`, `engine.harvestState`, `yieldSinceHarvestInj`).
+Substitutions are listed in `docs/DESIGN.md` V14. Two E2E assertions changed with them
+(`The Basin is empty` → `No collateral yet`; the landing loop text → `Deposit stINJ as collateral`).
+
+**Voice.** The VO is now **ElevenLabs** (`eleven_multilingual_v2`, `Daniel — Steady Broadcaster`, a
+male voice), 8 lines generated offline by `promo/audio/vo/generate.py`. The key is read from
+`ELEVENLABS_API_KEY` and never written to the repo — `.env.*` is gitignored and no committed file
+contains it. Line 6 runs at `speed=1.12` so it fits its caption window. The captions and the VO are
+now the same eight sentences, word for word.
+
+**Film.** The trust scene is a dark panel in the film's own system, not a white card pasted on black.
+The end card is full-bleed cobalt. Every cut is a branded cobalt wipe. The disclosure line and
+"Assumptions, not promises." are removed from the film. Measured: **−15.42 LUFS integrated,
+−1.16 dBTP**. Gates in `docs/promo/QA.md`.
+
+**Danger button.** `Self-liquidate` moved from a solid burnt-orange block to a heat-tinted surface
+with a hairline border; it only fills solid on hover. Verified in both themes from a live position.
+
+**Gates (v33):** `pnpm typecheck` → 0; `pnpm lint` → 0; `pnpm build` → OK; `pnpm test` → **19/19**;
+`pnpm e2e` → **36/36 passed** (axe 0). `promo/renders/quench-16x9-final.mp4` re-rendered: 1920×1080,
+30 fps, 40.00 s, qa.py exit 0 with no FAIL.

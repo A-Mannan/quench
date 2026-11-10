@@ -93,7 +93,7 @@ test('full simulated loop reaches zero debt and withdrawal', async ({ page }) =>
   });
   await shot(page, 'overview.png');
 
-  await page.goto('/app/basin');
+  await page.goto('/app/withdraw');
   await page.getByLabel('Amount to withdraw').fill('100');
   await page.getByTestId('withdraw-submit').click();
   await waitTx(page);
@@ -106,6 +106,20 @@ test('full simulated loop reaches zero debt and withdrawal', async ({ page }) =>
   await shot(page, 'activity.png');
 });
 
+test('withdraw tab opens the partial exit while debt remains', async ({ page }) => {
+  await connect(page);
+  await openPosition(page);
+
+  await page.locator('[data-testid="nav-withdraw"]:visible').first().click();
+  await expect(page).toHaveURL(/\/app\/withdraw/);
+  await expect(page.getByRole('heading', { name: 'Withdraw' })).toBeVisible();
+  await expect(page.getByText(/Safe withdrawal [\d,.]+ stINJ/)).toBeVisible();
+  await expect(page.getByTestId('withdraw-submit')).toBeDisabled();
+
+  await page.getByLabel('Amount to withdraw').fill('10');
+  await expect(page.getByTestId('withdraw-submit')).toBeEnabled();
+});
+
 test('connect, empty, loading and pending states', async ({ page }) => {
   await page.goto('/app');
   await expect(page.getByText('Open the instrument.')).toBeVisible();
@@ -113,8 +127,11 @@ test('connect, empty, loading and pending states', async ({ page }) => {
   await page.getByTestId('connect-button').click();
   await expect(page.getByTestId('tx-panel')).toContainText('in flight');
   await waitTx(page);
-  await expect(page.getByText('The Basin is empty')).toBeVisible();
+  await expect(page.getByText('No collateral yet')).toBeVisible();
   await shot(page, 'app-empty.png');
+
+  await page.goto('/app/withdraw');
+  await expect(page.getByText('Nothing to withdraw')).toBeVisible();
 });
 
 test('failed and rejected transactions preserve input', async ({ page }) => {
@@ -245,6 +262,6 @@ test('keyboard focus and reduced motion', async ({ page }) => {
     };
   });
   expect(focused.tag).toMatch(/A|BUTTON/);
-  await expect(page.getByText('Deposit stINJ')).toBeVisible();
+  await expect(page.getByText('Deposit stINJ as collateral')).toBeVisible();
   await shot(page, 'reduced-motion.png');
 });

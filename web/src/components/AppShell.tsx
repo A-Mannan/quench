@@ -15,6 +15,7 @@ const NAV = [
   { to: '/app', label: 'Dashboard', end: true },
   { to: '/app/loans', label: 'Loans' },
   { to: '/app/positions', label: 'Positions' },
+  { to: '/app/withdraw', label: 'Withdraw' },
   { to: '/app/swap', label: 'Swap' },
 ];
 
@@ -121,6 +122,7 @@ export function AppShell() {
             to={item.to}
             end={item.end}
             className={({ isActive }) => `bottom-nav__link${isActive ? ' is-active' : ''}`}
+            data-testid={`nav-${item.label.toLowerCase()}`}
           >
             <span>{item.label}</span>
           </NavLink>

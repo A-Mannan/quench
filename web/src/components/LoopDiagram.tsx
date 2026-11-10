@@ -4,22 +4,22 @@ const STEPS = [
   {
     number: '01',
     title: 'Deposit',
-    body: 'Put stINJ in the Basin. Collateral value is read from the LST exchange rate, not a DEX.',
+    body: 'Deposit stINJ as collateral. Its value comes from the staking rate, not a DEX.',
   },
   {
     number: '02',
-    title: 'Mint',
-    body: 'Mint qINJ up to half the collateral value. The mint fee leaves stINJ collateral.',
+    title: 'Borrow',
+    body: 'Borrow qINJ up to half the collateral value. The borrow fee leaves stINJ collateral.',
   },
   {
     number: '03',
     title: 'Cool',
-    body: 'Wellspring burns qINJ from your wallet as the exchange rate rises. Debt falls.',
+    body: 'Quench uses qINJ from your wallet to repay the debt as the exchange rate rises.',
   },
   {
     number: '04',
     title: 'Exit',
-    body: 'Redeem qINJ for stINJ at Confluence, or withdraw collateral once debt is zero.',
+    body: 'Swap qINJ for stINJ, or withdraw collateral once debt is zero.',
   },
 ];
 
@@ -32,7 +32,7 @@ function Fragment({ index }: { index: number }) {
           <span>stINJ</span>
         </div>
         <div className="circuit__fragment-foot">
-          <span>Basin balance</span>
+          <span>Collateral</span>
           <span>collateral</span>
         </div>
       </div>
@@ -92,7 +92,7 @@ function Fragment({ index }: { index: number }) {
         <b>stINJ</b>
       </div>
       <div className="circuit__fragment-foot">
-        <span>Confluence</span>
+        <span>Swap</span>
         <span>worst case</span>
       </div>
     </div>

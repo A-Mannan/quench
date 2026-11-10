@@ -102,12 +102,12 @@ export default function Wellspring() {
               data-testid="harvest-button"
               iconRight={<ArrowClockwise size={14} weight="bold" aria-hidden="true" />}
             >
-              Harvest
+              Repay with yield
             </Button>
           </div>
           <div className="pos-hero__amount">
             <strong>{formatAmount(yieldAvailable, 4)}</strong>
-            <span>Pending repayment · INJ yield to burn</span>
+            <span>Pending repayment · yield ready to apply</span>
           </div>
         </div>
 
@@ -202,15 +202,6 @@ export default function Wellspring() {
               Self-liquidate
             </Button>
           </div>
-
-          {debt === 0n ? (
-            <div className="pos-exit">
-              <p>No debt. Withdraw collateral.</p>
-              <ButtonLink to="/app/basin" variant="secondary">
-                Withdraw
-              </ButtonLink>
-            </div>
-          ) : null}
         </div>
       </section>
     </div>

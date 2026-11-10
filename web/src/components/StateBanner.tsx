@@ -22,7 +22,7 @@ export function StateBanner() {
             </Link>
           }
         >
-          Debt exceeds the maximum LTV after the rate drop. Mints and harvest are paused. A
+          Debt exceeds the maximum LTV after the rate drop. Borrowing and auto-repay are paused. A
           simulation liquidation can clear the position and record bad debt.
         </Banner>
       </div>
@@ -33,14 +33,14 @@ export function StateBanner() {
     fresh: 'Rate is fresh',
     stale: 'Rate is stale',
     'out-of-bounds': 'Rate is outside its bounds',
-    drop: 'LST exchange rate dropped',
+    drop: 'stINJ exchange rate dropped',
   };
 
   const body: Record<typeof rate.status, string> = {
     fresh: '',
-    stale: `The last rate update is older than ${snapshot.config.staleAfterDays} days. Mints and harvest are paused until the rate refreshes.`,
-    'out-of-bounds': `The rate ${formatRate(rate.value)} is outside ${formatRate(rate.min)}–${formatRate(rate.max)}. Mints and harvest are paused.`,
-    drop: `The rate is ${formatRate(rate.value)} after a downward move. Mints and harvest are paused. Redemption and zero-debt withdrawal stay open.`,
+    stale: `The last rate update is older than ${snapshot.config.staleAfterDays} days. Borrowing and auto-repay are paused until the rate refreshes.`,
+    'out-of-bounds': `The rate ${formatRate(rate.value)} is outside ${formatRate(rate.min)}–${formatRate(rate.max)}. Borrowing and auto-repay are paused.`,
+    drop: `The rate is ${formatRate(rate.value)} after a downward move. Borrowing and auto-repay are paused. Redemption and zero-debt withdrawal stay open.`,
   };
 
   return (

@@ -171,7 +171,7 @@ await snap('pos-zero');
 await snap('pos-zero-card', page.locator('section.card').first());
 await snapshot('positions-zero');
 
-await page.goto(`${BASE}/app/basin`, { waitUntil: 'networkidle' });
+await page.goto(`${BASE}/app/withdraw`, { waitUntil: 'networkidle' });
 await page.getByLabel('Amount to withdraw').fill('199.55');
 await snap('basin-withdraw-filled', page.locator('section.card').first());
 await page.getByTestId('withdraw-submit').click();

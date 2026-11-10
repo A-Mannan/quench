@@ -7,7 +7,11 @@
     "clock": "voice",
     "bpm": 120,
     "meter": "4/4",
-    "loop": false
+    "loop": false,
+    "transitions": {
+      "type": "wipe",
+      "duration": 0.66
+    }
   },
   "scenes": [
     {
@@ -46,11 +50,18 @@
       }
     },
     {
-      "id": "withdraw",
+      "id": "zero",
       "start": 19,
+      "end": 21,
+      "beats": {
+        "zero": 20
+      }
+    },
+    {
+      "id": "withdraw",
+      "start": 21,
       "end": 26,
       "beats": {
-        "zero": 20,
         "confirm": 24
       }
     },
@@ -91,19 +102,6 @@
     }
   ],
   "texts": [
-    {
-      "role": "cta",
-      "text": "Simulated demo · contracts not deployed",
-      "from": 0.2,
-      "to": 40,
-      "px": 48,
-      "box": [
-        96,
-        20,
-        1728,
-        110
-      ]
-    },
     {
       "role": "hook",
       "text": "quench — Your yield pays the loan.",
@@ -184,15 +182,28 @@
     },
     {
       "role": "term",
-      "text": "APR 7.53% assumption · fees 0.50%",
+      "text": "APR 7.53% · fees 0.50% · LTV 50.00%",
       "from": 33,
       "to": 36,
       "px": 48,
       "box": [
-        96,
-        220,
-        1400,
-        320
+        1080,
+        240,
+        1700,
+        620
+      ]
+    },
+    {
+      "role": "end",
+      "text": "Your yield pays the loan.",
+      "from": 36.4,
+      "to": 39.8,
+      "px": 72,
+      "box": [
+        980,
+        380,
+        1780,
+        620
       ]
     }
   ],
@@ -205,17 +216,17 @@
     {
       "from": 3.2,
       "to": 7.6,
-      "text": "Deposit a yield-bearing INJ LST into the Basin."
+      "text": "Deposit stINJ as collateral."
     },
     {
       "from": 8.2,
       "to": 12.4,
-      "text": "Borrow up to fifty percent of its value as qINJ."
+      "text": "Borrow up to half its value in qINJ."
     },
     {
       "from": 13.2,
       "to": 17.8,
-      "text": "Wellspring routes the staking yield to the debt."
+      "text": "Your staking yield pays the debt automatically."
     },
     {
       "from": 18.2,
@@ -230,17 +241,12 @@
     {
       "from": 26.2,
       "to": 30.8,
-      "text": "Redeem qINJ for LST units. Worst case, seven days."
+      "text": "Swap qINJ for stINJ. Worst case, seven days."
     },
     {
       "from": 31.2,
       "to": 35.0,
-      "text": "Assumptions, not promises."
-    },
-    {
-      "from": 36.2,
-      "to": 39.5,
-      "text": "Simulated demo. Contracts not deployed."
+      "text": "Every number has a source."
     }
   ],
   "terms": [

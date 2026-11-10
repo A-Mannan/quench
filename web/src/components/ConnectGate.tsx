@@ -44,7 +44,7 @@ export function ConnectGate() {
           <section className="card gate-card" aria-labelledby="connect-title">
             <div className="gate__bar" aria-hidden="true">
               <span>Quench</span>
-              <span className="gate__bar-crumbs"><span>Basin</span><span>/ 01</span></span>
+              <span className="gate__bar-crumbs"><span>Loans</span></span>
               <span className="gate__bar-net">testnet 1439</span>
             </div>
             <div className="gate__ruler" aria-hidden="true" />

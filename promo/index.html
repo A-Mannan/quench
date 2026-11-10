@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-composition-variables='[{"id":"disclosure","type":"string","label":"Disclosure","default":"Simulated demo · contracts not deployed"}]'>
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=1920, height=1080" />
@@ -19,13 +19,12 @@
       .bg { position: absolute; inset: 0; background:
         radial-gradient(1200px 700px at 50% -10%, rgba(46,91,255,0.10), rgba(46,91,255,0) 60%),
         linear-gradient(#090b0f, #090b0f); }
-      .grid { position: absolute; inset: 0; opacity: 1;
+      .grid { position: absolute; inset: -48px; opacity: 1;
         background-image: linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
         background-size: 48px 48px; }
       .bar { position: absolute; left: 0; right: 0; top: 0; height: 104px; display: flex; align-items: center; justify-content: space-between; padding: 0 56px; border-bottom: 1px solid rgba(255,255,255,0.10); z-index: 40; background: rgba(9,11,15,0.82); }
       .brand { font-size: 44px; font-weight: 600; letter-spacing: -0.02em; color: #f2f5fb; }
-      .disclosure { font-family: "JetBrains Mono", monospace; font-size: 48px; color: #c3cad9; letter-spacing: 0.04em; }
-      .disclosure b { color: #a9c2ff; }
+      .bar-mid { font-family: "JetBrains Mono", monospace; font-size: 24px; letter-spacing: 0.2em; color: #8b96ab; }
       .chain { font-family: "JetBrains Mono", monospace; font-size: 28px; color: #aab4c8; }
       .shot { position: absolute; right: 64px; top: 140px; bottom: 170px; width: 60%; display: flex; align-items: center; justify-content: center; }
       .shot img { max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; border: 1px solid rgba(255,255,255,0.14); box-shadow: 0 24px 80px rgba(0,0,0,0.45); }
@@ -38,20 +37,30 @@
       .counter { position: absolute; left: 96px; bottom: 230px; text-align: left; }
       .counter .n { font-family: "JetBrains Mono", monospace; font-size: 120px; font-weight: 600; color: #7fa0ff; line-height: 1; }
       .counter .u { font-family: "JetBrains Mono", monospace; font-size: 28px; color: #8b96ab; }
-      .label-run { position: absolute; left: 96px; bottom: 180px; font-family: "JetBrains Mono", monospace; font-size: 36px; font-weight: 600; color: #ffd479; border: 1px solid rgba(255,212,121,0.45); padding: 10px 18px; background: rgba(9,11,15,0.8); }
-      .rail { top: auto !important; bottom: 40px !important; left: 50% !important; right: auto !important; width: 1680px; margin-left: -840px; padding: 18px 28px; background: rgba(9,11,15,0.88); border: 1px solid rgba(255,255,255,0.14); font-size: 56px; font-weight: 500; color: #f2f5fb; text-align: center; }
-      .trust { position: absolute; inset: 120px 260px 140px 260px; background: #edf0f6; color: #101623; padding: 56px 64px; border: 1px solid rgba(16,22,35,0.2); }
-      .trust .kicker { color: #5a6a86; }
-      .trust h2 { font-size: 72px; letter-spacing: -0.02em; margin-top: 10px; }
-      .rows { margin-top: 36px; border-top: 2px solid #101623; }
-      .row { display: flex; justify-content: space-between; padding: 22px 0; border-bottom: 1px solid rgba(16,22,35,0.18); font-size: 40px; }
-      .row b { font-family: "JetBrains Mono", monospace; }
-      .note { font-size: 32px; color: #3d4a63; margin-top: 28px; }
-      .end { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 26px; z-index: 30; }
-      .mark { font-family: "JetBrains Mono", monospace; font-size: 56px; color: #7fa0ff; }
-      .word { font-size: 140px; font-weight: 600; letter-spacing: -0.03em; color: #f2f5fb; }
-      .end .dis { font-size: 56px; color: #f2f5fb; }
-      .src { font-family: "JetBrains Mono", monospace; font-size: 28px; color: #8b96ab; }
+      .rail { top: auto !important; bottom: 40px !important; left: 50% !important; right: auto !important; width: 1680px; margin-left: -840px; padding: 18px 28px; background: rgba(9,11,15,0.88); border: 1px solid rgba(255,255,255,0.14); font-size: 56px; font-weight: 500; color: #f2f5fb; text-align: center; opacity: 0; }
+      .trust { position: absolute; inset: 150px 96px 150px 96px; display: grid; grid-template-columns: 0.86fr 1.14fr; gap: 96px; align-items: center; }
+      .trust-left { border-left: 3px solid #2e5bff; padding-left: 32px; }
+      .trust-left h2 { font-size: 88px; line-height: 1.0; letter-spacing: -0.035em; color: #f2f5fb; margin-top: 16px; }
+      .trust-note { font-family: "JetBrains Mono", monospace; font-size: 21px; line-height: 1.55; color: #7c879c; margin-top: 32px; max-width: 620px; }
+      .trust-panel { background: #0e131c; border: 1px solid rgba(255,255,255,0.14); border-top: 2px solid #2e5bff; box-shadow: 0 30px 90px rgba(0,0,0,0.5); }
+      .trust-panel__head { display: flex; justify-content: space-between; padding: 20px 36px; border-bottom: 1px solid rgba(255,255,255,0.12); font-family: "JetBrains Mono", monospace; font-size: 17px; letter-spacing: 0.18em; color: #6f7c93; }
+      .trust-panel__body { padding: 0 36px; }
+      .trust-panel .row { display: flex; justify-content: space-between; align-items: baseline; padding: 20px 0; border-bottom: 1px solid rgba(255,255,255,0.10); font-size: 28px; color: #aab4c8; }
+      .trust-panel .row:last-child { border-bottom: 0; }
+      .trust-panel .row b { font-family: "JetBrains Mono", monospace; font-size: 31px; font-weight: 600; color: #f2f5fb; }
+      .end { position: absolute; inset: 0; background: #2e5bff; color: #fff; display: grid; grid-template-columns: 1.05fr 1fr; align-items: center; gap: 90px; padding: 0 150px; overflow: hidden; }
+      .end::after { content: ""; position: absolute; inset: 0; background-image: linear-gradient(rgba(255,255,255,0.07) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.07) 1px, transparent 1px); background-size: 64px 64px; pointer-events: none; }
+      .end-left, .end-right { position: relative; z-index: 1; }
+      .end-left { display: flex; flex-direction: column; align-items: flex-start; gap: 16px; }
+      .end-word { font-size: 168px; font-weight: 600; letter-spacing: -0.045em; line-height: 0.88; color: #fff; }
+      .end-kicker { font-family: "JetBrains Mono", monospace; font-size: 24px; letter-spacing: 0.2em; color: #fff; }
+      .end-line { font-size: 74px; line-height: 1.02; font-weight: 600; letter-spacing: -0.03em; color: #fff; }
+      .end-rule { width: 100%; height: 1px; background: rgba(255,255,255,0.45); margin: 40px 0 22px; }
+      .end-meta { font-family: "JetBrains Mono", monospace; font-size: 24px; letter-spacing: 0.12em; color: #fff; }
+      .wipe { position: absolute; inset: 0; z-index: 25; background: #0a0d13; will-change: transform; }
+      .wipe::before, .wipe::after { content: ""; position: absolute; top: 0; bottom: 0; width: 6px; background: #2e5bff; }
+      .wipe::before { left: 0; }
+      .wipe::after { right: 0; }
     </style>
   </head>
   <body>
@@ -62,7 +71,7 @@
       <div id="clip-02" class="clip" data-start="0" data-duration="40" data-track-index="1" style="z-index:40">
         <div class="bar">
           <div class="brand"><svg width="34" height="34" viewBox="0 0 24 24" aria-hidden="true" fill="none" style="vertical-align:-6px"><path d="M12 3.2C12 3.2 5.6 10.2 5.6 14.4a6.4 6.4 0 0 0 12.8 0C18.4 10.2 12 3.2 12 3.2Z" stroke="#7fa0ff" stroke-width="2.1"/><path d="M8.8 15.2h6.4" stroke="#7fa0ff" stroke-width="1.7" stroke-linecap="square"/></svg> quench</div>
-          <div class="disclosure"><b>Simulated demo</b> · contracts not deployed</div>
+          <div class="bar-mid">SELF-REPAYING LOAN</div>
           <div class="chain">TESTNET 1439</div>
         </div>
       </div>
@@ -75,96 +84,138 @@
       </div>
 
       <!-- deposit 3-8 -->
-      <div id="clip-04" class="clip" data-start="3" data-duration="5" data-track-index="2" style="z-index:10">
+      <div id="clip-04" class="clip" data-start="3" data-duration="5" data-track-index="3" style="z-index:11">
         <div class="shot"><img id="s-dep-img" src="capture/03-loans-filled.png" alt="Loans card with 200 stINJ and 90 qINJ typed" /></div>
         <div class="panel"><div class="kicker">LOANS · ADD</div><div class="term"><b>Add 200 stINJ</b> · borrow 90 qINJ</div></div>
       </div>
 
       <!-- mint 8-13 -->
-      <div id="clip-05" class="clip" data-start="8" data-duration="5" data-track-index="2" style="z-index:10">
+      <div id="clip-05" class="clip" data-start="8" data-duration="5" data-track-index="4" style="z-index:12">
         <div class="shot" style="transform: scale(1.28) translateY(4%); transform-origin: 50% 62%;"><img id="s-mint-img" src="capture/04-loans-minted.png" alt="Loans card after borrowing 90 qINJ" /></div>
         <div class="panel"><div class="kicker">LOANS · BORROW</div><div class="term"><b>90.00 qINJ</b> · LTV 45.10%</div></div>
       </div>
 
       <!-- harvest 13-19 -->
-      <div id="clip-06" class="clip" data-start="13" data-duration="6" data-track-index="2" style="z-index:10">
+      <div id="clip-06" class="clip" data-start="13" data-duration="6" data-track-index="5" style="z-index:13">
         <div class="shot"><img id="s-har-img" src="capture/08-pos-after-1y-card.png" alt="Position after one simulated year" /></div>
-        <div class="panel"><div class="kicker">POSITIONS · HARVEST</div><div class="term">Debt <b>90.00 → 74.44 qINJ</b> · 1 year at 7.53%</div></div>
+        <div class="panel"><div class="kicker">POSITIONS · AUTO-REPAY</div><div class="term">Debt <b>90.00 → 74.44 qINJ</b> · 1 year at 7.53%</div></div>
         <div class="counter"><div id="s-har-n" class="n">74.44</div><div class="u">DEBT · qINJ</div></div>
       </div>
 
       <!-- zero 19-21 (hero) -->
-      <div id="clip-07" class="clip" data-start="19" data-duration="2" data-track-index="2" style="z-index:10">
+      <div id="clip-07" class="clip" data-start="19" data-duration="2" data-track-index="6" style="z-index:14">
         <div class="shot"><img id="s-zero-img" src="capture/12-pos-zero-card.png" alt="Position at zero debt" /></div>
         <div class="panel"><div class="kicker">POSITIONS · ZERO</div><div class="title" style="font-size:64px">Debt is zero.</div></div>
       </div>
 
       <!-- withdraw 21-26 -->
-      <div id="clip-08" class="clip" data-start="21" data-duration="5" data-track-index="2" style="z-index:10">
+      <div id="clip-08" class="clip" data-start="21" data-duration="5" data-track-index="7" style="z-index:15">
         <div class="shot"><img id="s-wd-img" src="capture/13-basin-withdraw-filled.png" alt="Withdraw card" /></div>
-        <div class="panel"><div class="kicker">POSITIONS · WITHDRAW</div><div class="term">At zero debt, <b>withdraw</b></div></div>
+        <div class="panel"><div class="kicker">WITHDRAW</div><div class="term">At zero debt, <b>withdraw</b></div></div>
       </div>
 
       <!-- redeem 26-32 (separate labelled run) -->
-      <div id="clip-09" class="clip" data-start="26" data-duration="6" data-track-index="2" style="z-index:10">
+      <div id="clip-09" class="clip" data-start="26" data-duration="6" data-track-index="8" style="z-index:16">
         <div class="shot"><img id="s-rd-img" src="capture/17-swap-redeem-filled.png" alt="Swap, 10 qINJ" /></div>
-        <div class="panel"><div class="kicker">SWAP · REDEEM</div><div class="term"><b>10 qINJ → 9.95 stINJ</b></div></div>
-        <div class="label-run">SEPARATE SIMULATED RUN</div>
+        <div class="panel"><div class="kicker">SWAP</div><div class="term"><b>10 qINJ → 9.95 stINJ</b></div></div>
       </div>
 
       <!-- trust 32-36 -->
-      <div id="clip-10" class="clip" data-start="32" data-duration="4" data-track-index="2" style="z-index:10">
+      <div id="clip-10" class="clip" data-start="32" data-duration="4" data-track-index="9" style="z-index:17">
         <div class="trust">
-          <div class="kicker">SOURCES · SOURCE EVERY NUMBER</div>
-          <h2>Assumptions, not promises.</h2>
-          <div class="rows">
-            <div class="row"><span>INJ staking APR (scenario)</span><b>7.53%</b></div>
-            <div class="row"><span>Max LTV</span><b>50.00%</b></div>
-            <div class="row"><span>Mint / redeem fee</span><b>0.50%</b></div>
-            <div class="row"><span>Redemption worst case</span><b>7 days</b></div>
-            <div class="row"><span>Swap buffer</span><b>500 stINJ</b></div>
+          <div id="trust-left" class="trust-left">
+            <div class="kicker">SOURCES · 2026-11-09</div>
+            <h2>Every number<br />has a source.</h2>
+            <div class="trust-note">Staking Rewards (2026-11-09) for the APR; the rest is the simulator's own config.</div>
           </div>
-          <div class="note">Staking Rewards (2026-11-09) for the APR; the rest is the simulator's own config. Nothing here is live.</div>
+          <div id="trust-panel" class="trust-panel">
+            <div class="trust-panel__head"><span>SCENARIO INPUT</span><span>VALUE</span></div>
+            <div class="trust-panel__body">
+              <div class="row"><span>Staking APR (scenario)</span><b>7.53%</b></div>
+              <div class="row"><span>Max LTV</span><b>50.00%</b></div>
+              <div class="row"><span>Borrow / swap fee</span><b>0.50%</b></div>
+              <div class="row"><span>Swap worst case</span><b>7 days</b></div>
+              <div class="row"><span>Swap buffer</span><b>500 stINJ</b></div>
+            </div>
+          </div>
         </div>
       </div>
 
       <!-- end card 36-40 -->
-      <div id="clip-11" class="clip" data-start="36" data-duration="4" data-track-index="2" style="z-index:10">
+      <div id="clip-11" class="clip" data-start="36" data-duration="4" data-track-index="10" style="z-index:18">
         <div class="end">
-          <div id="e-mark" class="mark"><svg width="72" height="72" viewBox="0 0 24 24" aria-hidden="true" fill="none"><path d="M12 3.2C12 3.2 5.6 10.2 5.6 14.4a6.4 6.4 0 0 0 12.8 0C18.4 10.2 12 3.2 12 3.2Z" stroke="#7fa0ff" stroke-width="2.1"/><path d="M8.8 15.2h6.4" stroke="#7fa0ff" stroke-width="1.7" stroke-linecap="square"/></svg></div>
-          <div id="e-word" class="word">quench</div>
-          <div id="e-dis" class="dis">Simulated demo · contracts not deployed.</div>
-          <div id="e-src" class="src">Sources: promo/facts.json · docs/promo/CLAIMS.md</div>
+          <div class="end-left">
+            <div id="e-mark" class="end-mark"><svg width="64" height="64" viewBox="0 0 24 24" aria-hidden="true" fill="none"><path d="M12 3.2C12 3.2 5.6 10.2 5.6 14.4a6.4 6.4 0 0 0 12.8 0C18.4 10.2 12 3.2 12 3.2Z" stroke="#ffffff" stroke-width="2.1"/><path d="M8.8 15.2h6.4" stroke="#ffffff" stroke-width="1.7" stroke-linecap="square"/></svg></div>
+            <div id="e-word" class="end-word">quench</div>
+            <div id="e-kicker" class="end-kicker">SELF-REPAYING LOAN</div>
+          </div>
+          <div class="end-right">
+            <div id="e-line" class="end-line">Your yield<br />pays the loan.</div>
+            <div id="e-rule" class="end-rule"></div>
+            <div id="e-meta" class="end-meta">TESTNET 1439 · INJ</div>
+          </div>
         </div>
       </div>
 
-      <!-- captions (one rail, burned in) -->
-      <div id="cap-1" class="clip rail" data-start="0.2" data-duration="2.8" data-track-index="3" style="z-index:30">Your yield pays the loan.</div>
-      <div id="cap-2" class="clip rail" data-start="3.2" data-duration="4.4" data-track-index="3" style="z-index:30">Deposit a yield-bearing INJ LST into the Basin.</div>
-      <div id="cap-3" class="clip rail" data-start="8.2" data-duration="4.2" data-track-index="3" style="z-index:30">Borrow up to fifty percent of its value as qINJ.</div>
-      <div id="cap-4" class="clip rail" data-start="13.2" data-duration="4.6" data-track-index="3" style="z-index:30">Wellspring routes the staking yield to the debt.</div>
-      <div id="cap-5" class="clip rail" data-start="18.2" data-duration="3.0" data-track-index="3" style="z-index:30">Ninety qINJ falls to zero.</div>
-      <div id="cap-6" class="clip rail" data-start="21.6" data-duration="4.0" data-track-index="3" style="z-index:30">At zero debt, withdraw the collateral.</div>
-      <div id="cap-7" class="clip rail" data-start="26.2" data-duration="4.6" data-track-index="3" style="z-index:30">Redeem qINJ for LST units. Worst case, seven days.</div>
-      <div id="cap-8" class="clip rail" data-start="31.2" data-duration="3.8" data-track-index="3" style="z-index:30">Assumptions, not promises.</div>
-      <div id="cap-9" class="clip rail" data-start="36.2" data-duration="3.3" data-track-index="3" style="z-index:30">Simulated demo. Contracts not deployed.</div>
+      <!-- caption rail (burned in; sits under the wipe so cuts are clean) -->
+      <div id="cap-1" class="clip rail" data-start="0.2" data-duration="2.8" data-track-index="20" style="z-index:22">Your yield pays the loan.</div>
+      <div id="cap-2" class="clip rail" data-start="3.2" data-duration="4.4" data-track-index="20" style="z-index:22">Deposit stINJ as collateral.</div>
+      <div id="cap-3" class="clip rail" data-start="8.2" data-duration="4.2" data-track-index="20" style="z-index:22">Borrow up to half its value in qINJ.</div>
+      <div id="cap-4" class="clip rail" data-start="13.2" data-duration="4.6" data-track-index="20" style="z-index:22">Your staking yield pays the debt automatically.</div>
+      <div id="cap-5" class="clip rail" data-start="18.2" data-duration="3.0" data-track-index="20" style="z-index:22">Ninety qINJ falls to zero.</div>
+      <div id="cap-6" class="clip rail" data-start="21.6" data-duration="4.0" data-track-index="20" style="z-index:22">At zero debt, withdraw the collateral.</div>
+      <div id="cap-7" class="clip rail" data-start="26.2" data-duration="4.6" data-track-index="20" style="z-index:22">Swap qINJ for stINJ. Worst case, seven days.</div>
+      <div id="cap-8" class="clip rail" data-start="31.2" data-duration="3.8" data-track-index="20" style="z-index:22">Every number has a source.</div>
+
+      <!-- branded wipe: covers the cut, then reveals the next screen -->
+      <div id="wipe" class="clip wipe" data-start="0" data-duration="40" data-track-index="30" style="z-index:25"></div>
 
     </div>
     <script>
+      gsap.set("#wipe", { x: 0, xPercent: -100 });
       const tl = gsap.timeline({ paused: true });
-      const push = (sel, at) => tl.fromTo(sel, { opacity: 0 }, { opacity: 1, duration: 0.35, ease: "power4.out" }, at);
-      const rise = (sel, at) => tl.fromTo(sel, { opacity: 0, y: 28 }, { opacity: 1, y: 0, duration: 0.4, ease: "power4.out" }, at);
-      /* frame 0 is already the finished composition: the hook is static */
-      push("#s-dep-img", 2.8); push("#s-mint-img", 7.8); push("#s-har-img", 12.8);
-      push("#s-zero-img", 18.8); push("#s-wd-img", 20.8); push("#s-rd-img", 25.8);
-      // slow vertical drift (fixed scale — the product never grows), one hero move per shot
-      const pan = (sel, at, dur) => tl.fromTo(sel, { y: 16 }, { y: -16, duration: dur, ease: "none" }, at);
-      pan("#s-dep-img", 3.15, 4.85); pan("#s-mint-img", 8.15, 4.85);
-      pan("#s-har-img", 13.15, 5.85); pan("#s-wd-img", 21.15, 4.85); pan("#s-rd-img", 26.15, 5.85);
-      rise("#e-word", 36.3); rise("#e-dis", 36.6); rise("#e-src", 36.9);
-      document.querySelectorAll(".row").forEach((el, i) => {
-        tl.fromTo(el, { opacity: 0, x: 24 }, { opacity: 1, x: 0, duration: 0.35, ease: "power4.out" }, 32.3 + i * 0.4);
+      const cam = (sel, at, dur, fromScale = 1.035, fromY = 16) =>
+        tl.fromTo(sel, { scale: fromScale, y: fromY }, { scale: 1, y: -12, duration: dur, ease: "power1.inOut" }, at);
+
+      /* one branded wipe per cut: the panel covers the swap, then reveals the next screen */
+      const cuts = [3, 8, 13, 19, 21, 26, 32, 36];
+      tl.set("#wipe", { x: 0, xPercent: -100 }, 0);
+      cuts.forEach((t) => {
+        tl.set("#wipe", { xPercent: -100 }, t - 0.28);
+        tl.to("#wipe", { xPercent: 0, duration: 0.22, ease: "power4.in" }, t - 0.28);
+        tl.to("#wipe", { xPercent: 100, duration: 0.34, ease: "power4.out" }, t);
       });
+
+      /* slow camera settle inside each shot; the product never grows */
+      cam("#s-dep-img", 3, 5);
+      cam("#s-mint-img", 8, 5, 1.03, 10);
+      cam("#s-har-img", 13, 6);
+      cam("#s-zero-img", 19, 2, 1.05, 8);
+      cam("#s-wd-img", 21, 5);
+      cam("#s-rd-img", 26, 6);
+      tl.to(".grid", { x: 24, y: 12, duration: 40, ease: "none" }, 0);
+      tl.to(".bar", { autoAlpha: 0, duration: 0.25, ease: "power2.inOut" }, 36);
+      tl.fromTo("#clip-11", { scale: 1.02 }, { scale: 1, duration: 4, ease: "none" }, 36);
+
+      /* captions fade under the wipe instead of popping */
+      const capIn = (sel, at) => tl.fromTo(sel, { autoAlpha: 0, y: 10 }, { autoAlpha: 1, y: 0, duration: 0.28, ease: "power2.out" }, at);
+      const capOut = (sel, at) => tl.to(sel, { autoAlpha: 0, duration: 0.22, ease: "power2.in" }, at);
+      capIn("#cap-1", 0.2); capOut("#cap-1", 2.72);
+      capIn("#cap-2", 3.2); capOut("#cap-2", 7.32);
+      capIn("#cap-3", 8.2); capOut("#cap-3", 12.32);
+      capIn("#cap-4", 13.2); capOut("#cap-4", 17.72);
+      capIn("#cap-5", 18.2); capOut("#cap-5", 20.92);
+      capIn("#cap-6", 21.6); capOut("#cap-6", 25.32);
+      capIn("#cap-7", 26.2); capOut("#cap-7", 30.72);
+      capIn("#cap-8", 31.2); capOut("#cap-8", 34.92);
+
+      /* trust panel lands after the wipe reveals the source card */
+      tl.fromTo("#trust-left", { autoAlpha: 0, y: 18 }, { autoAlpha: 1, y: 0, duration: 0.4, ease: "power3.out" }, 32.12);
+      tl.fromTo("#trust-panel", { autoAlpha: 0, y: 18 }, { autoAlpha: 1, y: 0, duration: 0.4, ease: "power3.out" }, 32.2);
+      document.querySelectorAll(".trust-panel .row").forEach((el, i) => {
+        tl.fromTo(el, { opacity: 0, x: 18 }, { opacity: 1, x: 0, duration: 0.32, ease: "power4.out" }, 32.3 + i * 0.24);
+      });
+
       const hook = { v: 90 };
       tl.to(hook, { v: 74.44, duration: 2.5, ease: "power2.inOut", onUpdate: () => { document.querySelector("#s-hook-n").textContent = hook.v.toFixed(2); } }, 0.3);
       const hero = { v: 74.44 };

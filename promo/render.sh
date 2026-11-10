@@ -2,7 +2,7 @@
 # One-command rebuild (40 s cut): capture -> score -> VO mix -> render -> mux -> captions -> QA.
 # Prerequisites: Node 22+, Python3 (numpy, Pillow), ffmpeg/ffprobe, the cached
 # HyperFrames 0.8.150 binary, and web/ built. Starts the web preview if needed.
-# VO is the pre-generated local Kokoro-82M lines in promo/audio/vo/ (no API key).
+# VO is the pre-generated ElevenLabs lines in promo/audio/vo/ (regenerate with vo/generate.py).
 set -euo pipefail
 cd "$(dirname "$0")/.."
 HF=${HF_BIN:-$HOME/.npm/_npx/702923228c2ce1e6/node_modules/.bin/hyperframes}
@@ -16,45 +16,24 @@ fi
 # 2. Deterministic captures + engine facts
 node promo/capture.mjs
 
-# 3. Original score (48 kHz, 40 s) + loudness normalisation (-15 LUFS, TP -1.5)
+# 3. Original score (48 kHz stereo) + VO mix (envelope-ducked) + loudness
 python3 promo/audio/score.py
-ffmpeg -y -v error -i promo/audio/score-40.wav \
-  -af "loudnorm=I=-14:TP=-1.5:LRA=11" -c:a pcm_s16le promo/audio/score-40-final.wav
-
-# 4. VO mix (pre-generated Kokoro lines, music ducked -10 dB) + loudnorm
-python3 - <<'PY'
-import subprocess, numpy as np, wave
-SR, dur = 48000, 40
-buf = np.zeros(int(dur * SR))
-starts = {1: 3.2, 2: 8.2, 3: 13.2, 4: 18.2, 5: 21.6, 6: 26.2, 7: 31.2, 8: 36.2}
-for i, st in starts.items():
-    r = subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", f"promo/audio/vo/line{i}.wav",
-                        "-ar", "48000", "-ac", "1", "-f", "s16le", "-"], stdout=subprocess.PIPE)
-    a = np.frombuffer(r.stdout, dtype=np.int16).astype(np.float64) / 32768
-    j = int(st * SR)
-    buf[j:j + len(a)] += a * 0.9
-with wave.open("promo/audio/vo-mix.wav", "wb") as w:
-    w.setnchannels(1); w.setsampwidth(2); w.setframerate(SR)
-    w.writeframes((np.clip(buf, -1, 1) * 32767).astype(np.int16).tobytes())
-PY
-ffmpeg -y -v error -i promo/audio/vo-mix.wav -i promo/audio/score-40-final.wav \
-  -filter_complex "[1:a]volume=0.22[m];[0:a][m]amix=inputs=2:duration=longest:normalize=0[a]" \
-  -map "[a]" -c:a pcm_s16le promo/audio/mix.wav
+python3 promo/audio/mix.py
 ffmpeg -y -v error -i promo/audio/mix.wav \
   -af "loudnorm=I=-15:TP=-1.5:LRA=11" -c:a pcm_s16le promo/audio/mix-final.wav
 
-# 5. Timeline gate (video-director, MIT)
+# 4. Timeline gate (video-director, MIT)
 python3 /tmp/opencode/vet/repos/check_timeline.py promo/timeline.json
 
-# 6. Render the 40 s film (vertical cut dropped by user, 2026-11-09)
+# 5. Render the 40 s film (vertical cut dropped by user, 2026-11-09)
 "$HF" lint promo
 "$HF" render promo -f 30 -q delivery -o promo/renders/quench-16x9.mp4
 
-# 7. Mux the mix
+# 6. Mux the mix
 ffmpeg -y -v error -i promo/renders/quench-16x9.mp4 -i promo/audio/mix-final.wav \
   -map 0:v -map 1:a -c:v copy -c:a aac -b:a 192k -shortest promo/renders/quench-16x9-final.mp4
 
-# 8. Captions from the same cue table as the composition
+# 7. Captions from the same cue table as the composition
 python3 - <<'PY'
 import json
 d = json.load(open("promo/timeline.json"))
@@ -66,7 +45,7 @@ with open("promo/captions.srt", "w") as f:
         f.write(f"{i}\n{ts(c['from'])} --> {ts(c['to'])}\n{c['text']}\n\n")
 PY
 
-# 9. Measured QA + contact sheets
+# 8. Measured QA + contact sheets
 python3 promo/tools/qa.py promo/renders/quench-16x9-final.mp4 --out docs/promo/qa
 
 echo "Done: promo/renders/quench-16x9-final.mp4"

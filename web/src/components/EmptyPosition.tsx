@@ -7,7 +7,7 @@ export function EmptyPosition() {
   return (
     <section className="card empty-simple">
       <InstrumentBar crumb="Loans" chainId={snapshot.chainId} />
-      <h2>The Basin is empty</h2>
+      <h2>No collateral yet</h2>
       <p className="muted">Deposit stINJ to borrow qINJ. No liquidation risk.</p>
       <ButtonLink to="/app/loans" full size="lg">
         Add collateral &amp; borrow
