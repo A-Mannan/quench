@@ -58,7 +58,9 @@
 - `docs/RISKS.md` — MVP threat model + clean-room statement (fork rows added in tasks 7.4).
 - `docs/research.md` — claims register C1–C30 + link log.
 - `alchemix-v3/` — pinned fork submodule (never edited directly).
-- `src/`, `test/`, `script/`, `foundry.toml`, `README.md` — frozen clean-room MVP.
+- `src/`, `test/`, `script/`, `foundry.toml` — frozen clean-room MVP.
+- `README.md` — project front door (problem, mechanics, sourced numbers, status, the ask).
+- `docs/DEPLOY.md` — deploy runbook for the reference build (testnet only).
 - `openspec/changes/fork-alchemix-v3/` — proposal, design (F1–F11), specs (basin/qinj/confluence/protocol-safety/fork-tooling), tasks.
 - `openspec/changes/build-quench-mvp/` — frozen completed record.
 - `openspec/changes/build-quench-demo-ui/`, `openspec/changes/build-quench-promo-video/` — shipped records.

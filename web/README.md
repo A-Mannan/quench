@@ -10,7 +10,7 @@ pnpm install
 pnpm dev      # http://localhost:5173
 pnpm preview  # production preview, http://localhost:4173 (used for QA screenshots)
 pnpm build    # tsc --noEmit && vite build → dist/
-pnpm test     # vitest (12 engine tests)
+pnpm test     # vitest (19 engine tests)
 pnpm lint     # eslint
 pnpm typecheck
 ```
