@@ -19,7 +19,6 @@ export default function Overview() {
   const { client, snapshot } = useQuench();
   const { busy, error, run } = useAction();
   const [view, setView] = useState<'mine' | 'protocol'>('mine');
-  const [onlyActive, setOnlyActive] = useState(true);
   const hasPosition = snapshot.position.collateralLst > 0n || snapshot.position.debtQinj > 0n;
   const yieldAvailable = snapshot.metrics.yieldSinceHarvestInj;
 
@@ -112,7 +111,7 @@ export default function Overview() {
 
       <div className="dash-grid">
         <section className="card" aria-label="Loan">
-          <InstrumentBar crumb="Loan / 01" chainId={snapshot.chainId} />
+          <InstrumentBar crumb="Loan" chainId={snapshot.chainId} />
           <div className="seg" role="tablist" aria-label="Stats view">
             <button
               type="button"
@@ -141,14 +140,14 @@ export default function Overview() {
                   Collateral
                 </span>
                 <span className="v">{formatAmount(snapshot.position.collateralLst, 2)} stINJ</span>
-                <span className="s">Basin position</span>
+                <span className="s">Staking collateral</span>
               </div>
               <div className="loan-field">
                 <span className="k">
                   Current debt
                 </span>
                 <span className="v">{formatAmount(snapshot.position.debtQinj, 2)} qINJ</span>
-                <span className="s">1 opened position</span>
+                <span className="s">Staking yield pays it down</span>
               </div>
               <div className="loan-field">
                 <span className="k">
@@ -182,18 +181,18 @@ export default function Overview() {
                   TVL
                 </span>
                 <span className="v">{formatAmount(snapshot.metrics.collateralValueInj, 2)} INJ</span>
-                <span className="s">Basin collateral</span>
+                <span className="s">Staking collateral</span>
               </div>
               <div className="loan-field">
                 <span className="k">
                   Total debt
                 </span>
                 <span className="v">{formatAmount(snapshot.position.debtQinj, 2)} qINJ</span>
-                <span className="s">1 opened position</span>
+                <span className="s">Staking yield pays it down</span>
               </div>
               <div className="loan-field">
                 <span className="k">
-                  Confluence buffer
+                  Swap buffer
                 </span>
                 <span className="v">{formatAmount(snapshot.protocol.bufferLst, 2)} stINJ</span>
                 <span className="s">{formatAmount(snapshot.protocol.queuedLst, 2)} queued</span>
@@ -203,7 +202,7 @@ export default function Overview() {
         </section>
 
         <section className="card card--chart" aria-label="Statistics">
-          <InstrumentBar crumb="Statistics / 01" chainId={snapshot.chainId} />
+          <InstrumentBar crumb="Statistics" chainId={snapshot.chainId} />
           <div className="card__head">
             <h2>Statistics</h2>
           </div>
@@ -211,53 +210,51 @@ export default function Overview() {
             points={chart.points}
             currentMonth={chart.currentMonth}
             eyebrow="Debt projection"
-            ariaLabel="Debt history and projected debt reduction for the current Basin position"
+            ariaLabel="Debt projection for the current position"
           />
         </section>
       </div>
 
-      <section className="card" aria-label="Your positions">
-        <InstrumentBar crumb="Positions / 01" chainId={snapshot.chainId} />
-        <div className="card__head">
-          <h2>
-            Your positions <span className="count-badge" aria-label="1 position">1</span>
-          </h2>
-          <label className="check">
-            <input type="checkbox" checked={onlyActive} onChange={(e) => setOnlyActive(e.target.checked)} />
-            Show only Active positions
-          </label>
-        </div>
-        {isActive || !onlyActive ? (
-          <div className="pos-row">
-            <span className="pos-row__icon" aria-hidden="true">
-              Q
-            </span>
+      <section className="card" aria-label="Position">
+        <InstrumentBar crumb="Position" chainId={snapshot.chainId} />
+        <h2 className="loan-head">Position</h2>
+        <div className="pos-hero">
+          <span
+            className={`pos-hero__status${isActive ? '' : ' pos-hero__status--matured'}`}
+          >
+            <i aria-hidden="true" />
+            {isActive ? 'Active' : 'Matured'}
+          </span>
+          <dl className="pos-readouts" style={{ gridTemplateColumns: '1fr 1fr' }}>
             <div>
-              <div className="pos-row__meta">
-                <span>
-                  <strong>BASIN</strong> · stINJ
-                </span>
-                <span>{ltvPct.toFixed(0)}%</span>
-              </div>
-              <div className={`pos-bar ${snapshot.position.debtQinj === 0n ? 'pos-bar--blue' : 'pos-bar--green'}`}>
-                <span style={{ width: `${snapshot.position.debtQinj === 0n ? 100 : ltvFill}%` }} />
-              </div>
+              <dt>Collateral</dt>
+              <dd>{formatAmount(snapshot.position.collateralLst, 2)} <span>stINJ</span></dd>
             </div>
-            <span className={`pos-status ${snapshot.position.debtQinj === 0n ? 'pos-status--matured' : 'pos-status--active'}`}>
-              <i aria-hidden="true" />
-              {snapshot.position.debtQinj === 0n ? 'Matured' : 'Active'}
-            </span>
+            <div>
+              <dt>Debt</dt>
+              <dd>{formatAmount(snapshot.position.debtQinj, 2)} <span>qINJ</span></dd>
+            </div>
+            <div>
+              <dt>qINJ in wallet</dt>
+              <dd>{formatAmount(snapshot.position.qinjBalance, 2)} <span>qINJ</span></dd>
+            </div>
+            <div>
+              <dt>Swap buffer</dt>
+              <dd>{formatAmount(snapshot.protocol.bufferLst, 0)} <span>stINJ</span></dd>
+            </div>
+          </dl>
+          <div className="pos-ltv">
+            <div className="pos-ltv__meta">
+              <span>LTV</span>
+              <strong>{ltvPct.toFixed(1)}% of {formatPct(snapshot.config.maxLtvBps)} max</strong>
+            </div>
+            <div className="progress" aria-hidden="true">
+              <span style={{ width: `${ltvFill}%` }} />
+            </div>
           </div>
-        ) : (
-          <p className="muted position-none">No active positions.</p>
-        )}
-        <div className="mini-row">
-          <span>qINJ in wallet</span>
-          <strong>{formatAmount(snapshot.position.qinjBalance, 2)} qINJ</strong>
-        </div>
-        <div className="mini-row">
-          <span>Buffer</span>
-          <strong>{formatAmount(snapshot.protocol.bufferLst, 0)} stINJ</strong>
+          <Link to="/app/positions" className="text-link">
+            Open position
+          </Link>
         </div>
       </section>
     </div>

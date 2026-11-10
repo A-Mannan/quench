@@ -10,6 +10,7 @@ import {
   connectState,
   createInitialState,
   depositState,
+  depositAndMintState,
   drainBufferState,
   dropRateState,
   fastForwardState,
@@ -19,6 +20,8 @@ import {
   makeStaleState,
   mintState,
   redeemState,
+  repayState,
+  selfLiquidateState,
   setNextOutcomeState,
   setTxState,
   setWrongNetworkState,
@@ -222,8 +225,22 @@ export class SimulatedClient implements QuenchClient {
     return this.transact('mint', (state) => mintState(state, amount));
   }
 
+  async depositAndMint(depositAmount: bigint, amount: bigint): Promise<TxReceipt> {
+    return this.transact('loan', (state) =>
+      depositAndMintState(state, depositAmount, amount),
+    );
+  }
+
   async harvest(): Promise<TxReceipt> {
     return this.transact('harvest', harvestState);
+  }
+
+  async repay(amount: bigint): Promise<TxReceipt> {
+    return this.transact('repay', (state) => repayState(state, amount));
+  }
+
+  async selfLiquidate(): Promise<TxReceipt> {
+    return this.transact('self-liquidate', selfLiquidateState);
   }
 
   async redeem(amount: bigint): Promise<TxReceipt> {

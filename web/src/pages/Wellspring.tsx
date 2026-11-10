@@ -1,33 +1,76 @@
 import { useState } from 'react';
 import { ArrowClockwise } from '@phosphor-icons/react';
 import { useQuench } from '../client';
-import { formatAmount, formatDateTime, formatPct } from '../client/math';
+import { formatAmount, formatPct, parseTokenInput } from '../client/math';
 import { useAction } from '../lib/useAction';
 import { Banner } from '../components/Banner';
 import { Button, ButtonLink } from '../components/Button';
+import { EmptyPosition } from '../components/EmptyPosition';
 import { InstrumentBar } from '../components/InstrumentBar';
 import { StateBanner } from '../components/StateBanner';
 
 export default function Wellspring() {
   const { client, snapshot } = useQuench();
   const { busy, error, run } = useAction();
-  const [onlyActive, setOnlyActive] = useState(true);
+  const [repayInput, setRepayInput] = useState('');
+  const hasPosition = snapshot.position.collateralLst > 0n || snapshot.position.debtQinj > 0n;
+
   const yieldAvailable = snapshot.metrics.yieldSinceHarvestInj;
   const paused = snapshot.protocol.pausedHarvest || snapshot.network === 'wrong';
   const debt = snapshot.position.debtQinj;
   const qinj = snapshot.position.qinjBalance;
-  const harvestEvents = snapshot.events.filter((event) => event.type === 'harvest').slice(-8).reverse();
   const canHarvest = !paused && debt > 0n && yieldAvailable > 0n;
   const ltv = snapshot.metrics.ltvBps;
   const ltvFill = Math.min(100, (ltv / snapshot.config.maxLtvBps) * 100);
+  const repayAmount = parseTokenInput(repayInput);
+  const maxRepay = qinj < debt ? qinj : debt;
+  const repayError =
+    repayAmount > qinj
+      ? `Exceeds qINJ balance (${formatAmount(qinj, 2)} qINJ).`
+      : repayAmount > debt
+        ? `Exceeds debt (${formatAmount(debt, 2)} qINJ).`
+        : undefined;
+  const canRepay =
+    snapshot.network === 'testnet' &&
+    repayAmount > 0n &&
+    repayAmount <= qinj &&
+    repayAmount <= debt;
+  const canSelfLiquidate =
+    snapshot.network === 'testnet' &&
+    debt > 0n &&
+    snapshot.position.collateralLst > 0n &&
+    !snapshot.protocol.liquidated;
+  const isActive = debt > 0n;
 
   const harvest = () => run('harvest', () => client.harvest());
+  const repay = async () => {
+    await run('repay', async () => {
+      await client.repay(repayAmount);
+      setRepayInput('');
+    });
+  };
+
+  const selfLiquidate = () => run('self-liquidate', () => client.selfLiquidate());
+
+  if (!hasPosition) {
+    return (
+      <div className="page-simple page-simple--narrow">
+        <StateBanner />
+        {error ? (
+          <Banner tone="danger" title="Action failed">
+            {error}
+          </Banner>
+        ) : null}
+        <EmptyPosition />
+      </div>
+    );
+  }
 
   return (
-    <div className="page-simple">
+    <div className="page-simple page-simple--narrow">
       <StateBanner />
       {error ? (
-        <Banner tone="danger" title="Harvest failed">
+        <Banner tone="danger" title="Action failed">
           {error}
         </Banner>
       ) : null}
@@ -38,113 +81,137 @@ export default function Wellspring() {
         </Banner>
       ) : null}
 
-      <section className="card" aria-label="Your positions">
-        <InstrumentBar crumb="Basin / position" chainId={snapshot.chainId} />
-        <div className="card__head">
-          <h2>
-            Your positions <span className="count-badge">1</span>
-          </h2>
-          <label className="check">
-            <input type="checkbox" checked={onlyActive} onChange={(e) => setOnlyActive(e.target.checked)} />
-            Show only Active positions
-          </label>
-        </div>
-        {debt > 0n || !onlyActive ? (
-          <div className="pos-row">
-            <span className="pos-row__icon" aria-hidden="true">
-              Q
-            </span>
-            <div>
-              <div className="pos-row__meta">
-                <span>
-                  <strong>BASIN</strong> · stINJ
-                </span>
-                <span>{(ltv / 100).toFixed(0)}%</span>
-              </div>
-              <div className={`pos-bar ${debt === 0n ? 'pos-bar--blue' : 'pos-bar--green'}`}>
-                <span style={{ width: `${debt === 0n ? 100 : ltvFill}%` }} />
-              </div>
-            </div>
-            <span className={`pos-status ${debt === 0n ? 'pos-status--matured' : 'pos-status--active'}`}>
+      <section className="card" aria-label="Position">
+        <InstrumentBar crumb="Positions" chainId={snapshot.chainId} />
+        <h2 className="loan-head">Position</h2>
+
+        <div className="pos-hero">
+          <div className="pos-hero__top">
+            <span
+              className={`pos-hero__status${isActive ? '' : ' pos-hero__status--matured'}`}
+            >
               <i aria-hidden="true" />
-              {debt === 0n ? 'Matured' : 'Active'}
+              {isActive ? 'Active' : 'Matured'}
             </span>
+            <Button
+              size="sm"
+              variant="secondary"
+              onClick={harvest}
+              loading={busy === 'harvest'}
+              disabled={!canHarvest}
+              data-testid="harvest-button"
+              iconRight={<ArrowClockwise size={14} weight="bold" aria-hidden="true" />}
+            >
+              Harvest
+            </Button>
           </div>
-        ) : (
-          <p className="muted position-none">No active positions.</p>
-        )}
-        <div className="detail-wrap">
-          <div className="detail-hero">
-            <div>
-              <strong>BASIN</strong>
-              <span>stINJ</span>
-            </div>
-            <div>
-              <p>Staking yield pays the loan down. No liquidation risk.</p>
-            </div>
+          <div className="pos-hero__amount">
+            <strong>{formatAmount(yieldAvailable, 4)}</strong>
+            <span>Pending repayment · INJ yield to burn</span>
           </div>
-          <div className="detail-side">
-            <h2>Pending repayment</h2>
-            <div className="hero-amount">
-              <strong>{formatAmount(yieldAvailable, 4)}</strong>
-              <span>INJ yield to burn</span>
+        </div>
+
+        <dl className="pos-readouts">
+          <div>
+            <dt>Collateral</dt>
+            <dd>{formatAmount(snapshot.position.collateralLst, 2)} <span>stINJ</span></dd>
+          </div>
+          <div>
+            <dt>Debt</dt>
+            <dd>{formatAmount(debt, 2)} <span>qINJ</span></dd>
+          </div>
+          <div>
+            <dt>qINJ in wallet</dt>
+            <dd>{formatAmount(qinj, 2)} <span>qINJ</span></dd>
+          </div>
+          <div>
+            <dt>Yield rate</dt>
+            <dd>{formatPct(snapshot.rate.aprBps)} <span>APY</span></dd>
+          </div>
+        </dl>
+
+        <div className="pos-ltv">
+          <div className="pos-ltv__meta">
+            <span>LTV</span>
+            <strong>{(ltv / 100).toFixed(1)}% of {formatPct(snapshot.config.maxLtvBps)} max</strong>
+          </div>
+          <div className="progress" aria-hidden="true">
+            <span style={{ width: `${ltvFill}%` }} />
+          </div>
+        </div>
+
+        <div className="pos-actions">
+          <span className="field-label">Repay with qINJ</span>
+          <div className="repay-inline">
+            <div className={`token-box amount-field__control${repayError ? ' amount-field--error' : ''}`}>
+              <div className="token-box__row">
+                <input
+                  id="repay-amount"
+                  className="amount-field__input"
+                  inputMode="decimal"
+                  autoComplete="off"
+                  spellCheck={false}
+                  value={repayInput}
+                  onChange={(event) => setRepayInput(event.target.value)}
+                  placeholder="0.00"
+                  disabled={debt === 0n || qinj === 0n || snapshot.network !== 'testnet'}
+                  aria-label="Repay amount"
+                  aria-invalid={repayError ? true : undefined}
+                  data-testid="repay-input"
+                />
+                <button
+                  type="button"
+                  className="chip"
+                  onClick={() => setRepayInput(formatAmount(maxRepay, 18))}
+                  disabled={debt === 0n || qinj === 0n || snapshot.network !== 'testnet'}
+                >
+                  Max
+                </button>
+                <span className="token-pill">
+                  <span className="token-ico" aria-hidden="true">Q</span> qINJ
+                </span>
+              </div>
+              {repayError ? (
+                <div className="amount-field__help amount-field__help--error" role="alert">{repayError}</div>
+              ) : null}
             </div>
-            <div className="loan-field">
-              <span className="k">
-                Collateral
-              </span>
-              <span className="v">{formatAmount(snapshot.position.collateralLst, 2)} stINJ</span>
-              <span className="s">{formatAmount(snapshot.metrics.collateralValueInj, 2)} INJ · {formatPct(snapshot.rate.aprBps)} APY</span>
-            </div>
-            <div className="loan-field">
-              <span className="k">
-                Debt
-              </span>
-              <span className="v">{formatAmount(debt, 2)} qINJ</span>
-              <span className="s">qINJ to burn: {formatAmount(qinj, 2)}</span>
-            </div>
-            <div className="progress" aria-hidden="true">
-              <span style={{ width: `${ltvFill}%` }} />
-            </div>
-            <div className="action-row">
-              <Button
-                full
-                onClick={harvest}
-                loading={busy === 'harvest'}
-                disabled={!canHarvest}
-                data-testid="harvest-button"
-                iconRight={<ArrowClockwise size={18} weight="bold" aria-hidden="true" />}
-              >
-                Harvest yield
-              </Button>
-              <ButtonLink to="/app/swap" variant="secondary" full>
-                Redeem
+            <Button
+              onClick={repay}
+              loading={busy === 'repay'}
+              disabled={!canRepay}
+              data-testid="repay-submit"
+              iconRight={false}
+            >
+              Repay
+            </Button>
+          </div>
+
+          <div className="pos-footer">
+            <ButtonLink to="/app/swap" variant="secondary" size="sm" iconRight={false}>
+              Swap qINJ
+            </ButtonLink>
+            <Button
+              variant="danger"
+              size="sm"
+              onClick={selfLiquidate}
+              loading={busy === 'self-liquidate'}
+              disabled={!canSelfLiquidate}
+              data-testid="self-liquidate-submit"
+              iconRight={false}
+            >
+              Self-liquidate
+            </Button>
+          </div>
+
+          {debt === 0n ? (
+            <div className="pos-exit">
+              <p>No debt. Withdraw collateral.</p>
+              <ButtonLink to="/app/basin" variant="secondary">
+                Withdraw
               </ButtonLink>
             </div>
-            {debt === 0n ? (
-              <p className="fine">No debt. Withdraw in Basin.</p>
-            ) : null}
-          </div>
+          ) : null}
         </div>
-      </section>
-
-      <section className="card" aria-label="History">
-        <InstrumentBar crumb="History / 01" chainId={snapshot.chainId} />
-        <h2>History</h2>
-        {harvestEvents.length === 0 ? (
-          <p className="muted">No harvests yet.</p>
-        ) : (
-          <ul className="simple-list">
-            {harvestEvents.map((event) => (
-              <li key={event.id}>
-                <span>{event.title}</span>
-                <span className="muted-inline">
-                  {event.amount ? `${formatAmount(event.amount, 2)} ${event.unit}` : ''} {formatDateTime(event.at)}
-                </span>
-              </li>
-            ))}
-          </ul>
-        )}
       </section>
     </div>
   );

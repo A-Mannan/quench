@@ -1,0 +1,35 @@
+1
+00:00:00,200 --> 00:00:03,000
+Your yield pays the loan.
+
+2
+00:00:03,200 --> 00:00:07,600
+Deposit a yield-bearing INJ LST into the Basin.
+
+3
+00:00:08,200 --> 00:00:12,400
+Borrow up to fifty percent of its value as qINJ.
+
+4
+00:00:13,200 --> 00:00:17,800
+Wellspring routes the staking yield to the debt.
+
+5
+00:00:18,200 --> 00:00:21,200
+Ninety qINJ falls to zero.
+
+6
+00:00:21,600 --> 00:00:25,600
+At zero debt, withdraw the collateral.
+
+7
+00:00:26,200 --> 00:00:30,800
+Redeem qINJ for LST units. Worst case, seven days.
+
+8
+00:00:31,200 --> 00:00:35,000
+Assumptions, not promises.
+
+9
+00:00:36,200 --> 00:00:39,500
+Simulated demo. Contracts not deployed.

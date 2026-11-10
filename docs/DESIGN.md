@@ -187,3 +187,12 @@ Whole-surface audit (88 captures: landing + all six app screens × 4 widths × 2
 | Crumb `QUENCH / BASIN` uppercase mono | Title case `Quench / Basin` | The logotype is lowercase; chrome must not shout over it |
 | Button press = `translateY(1px)` | `scale(0.98)` | Press feedback like a physical control (Emil); no `transition: all`, durations unchanged |
 | Wordmark 22px, gap .55rem, 1.125rem | 24px, gap .5rem, 1.25rem/700 | Mark and type meet at matched optical x-height; mark, type and favicon are the same geometry |
+
+## V12 addendum (2026-11-10): compaction rules
+
+- One row beats three stacked rows: after-values are a 3-column strip, not a stack of rows. Every figure survives; only the frame shrinks.
+- The primary action sits on the input line when it fits (`Repay`), and goes full-width when it does not (≤480px). A button is never square: inline actions are ≥96px wide.
+- Secondary actions share a footer row (`Swap qINJ` | `Self-liquidate`); the danger action is available, not the loudest thing on the page.
+- No decorative indices: `Loans`, not `Loans / 01`. A number is printed only when it counts something real.
+- Arrows mean navigation. Transaction buttons are plain; `↗` is reserved for real external links (landing, sources).
+- Swap output is accented only when it has a value; at rest it is a plain field. Copy is buffer-aware (`Buffer covers this redemption`) instead of always promising 7 days.

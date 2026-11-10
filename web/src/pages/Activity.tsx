@@ -17,8 +17,8 @@ const FILTERS: { id: Filter; label: string }[] = [
 function filterEvent(type: string, filter: Filter): boolean {
   if (filter === 'all') return true;
   if (filter === 'position') return ['deposit', 'mint', 'connect', 'withdraw'].includes(type);
-  if (filter === 'yield') return type === 'harvest';
-  if (filter === 'exit') return type === 'redeem';
+  if (filter === 'yield') return type === 'harvest' || type === 'repay';
+  if (filter === 'exit') return type === 'redeem' || type === 'self-liquidate';
   return type === 'rate' || type === 'liquidate' || type === 'queue';
 }
 
@@ -49,7 +49,7 @@ export default function Activity() {
       </div>
 
       <section className="card" aria-label="Simulated activity">
-        <InstrumentBar crumb="Activity / 01" chainId={snapshot.chainId} />
+        <InstrumentBar crumb="Activity" chainId={snapshot.chainId} />
         {events.length === 0 ? (
           <p className="muted">No events yet.</p>
         ) : (

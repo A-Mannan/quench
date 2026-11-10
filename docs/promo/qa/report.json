@@ -1,0 +1,126 @@
+{
+  "file": "promo/renders/quench-16x9-final.mp4",
+  "info": {
+    "w": 1920,
+    "h": 1080,
+    "fps": 30.0,
+    "dur": 40.0
+  },
+  "checks": [
+    {
+      "level": "PASS",
+      "check": "spec",
+      "detail": "h264 1920x1080 @ 30 fps, 40.00s (planned 1920x1080 30fps 40s)"
+    },
+    {
+      "level": "PASS",
+      "check": "frame 0",
+      "detail": "mean 17.5, std 27.6"
+    },
+    {
+      "level": "WARN",
+      "check": "single-frame flashes",
+      "detail": "2 spikes"
+    },
+    {
+      "level": "WARN",
+      "check": "frozen stretch",
+      "detail": "3.2-7.6s (4.4s)"
+    },
+    {
+      "level": "WARN",
+      "check": "frozen stretch",
+      "detail": "8.2-12.4s (4.2s)"
+    },
+    {
+      "level": "WARN",
+      "check": "frozen stretch",
+      "detail": "19.0-21.0s (2.0s)"
+    },
+    {
+      "level": "WARN",
+      "check": "frozen stretch",
+      "detail": "21.6-25.6s (4.0s)"
+    },
+    {
+      "level": "WARN",
+      "check": "frozen stretch",
+      "detail": "26.2-30.8s (4.6s)"
+    },
+    {
+      "level": "WARN",
+      "check": "frozen stretch",
+      "detail": "32.0-35.0s (3.0s)"
+    },
+    {
+      "level": "WARN",
+      "check": "frozen stretch",
+      "detail": "36.8-39.5s (2.7s)"
+    },
+    {
+      "level": "WARN",
+      "check": "duplicate frames",
+      "detail": "16 identical pairs"
+    },
+    {
+      "level": "PASS",
+      "check": "cuts vs plan",
+      "detail": "planned [3, 8, 13, 19, 26, 32, 36]; detected [3.0, 8.0, 13.0, 19.0, 21.0, 26.0, 32.0, 36.0]; missing []"
+    },
+    {
+      "level": "PASS",
+      "check": "loudness / true peak",
+      "detail": "integrated -15.88 LUFS (target -15), true peak -1.35 dBTP (limit -1)"
+    },
+    {
+      "level": "WARN",
+      "check": "planned silence",
+      "detail": "planned 18.5-19.5s (music dip; VO speaks over it); long quiet windows []"
+    },
+    {
+      "level": "PASS",
+      "check": "unintended silence",
+      "detail": "[]"
+    },
+    {
+      "level": "PASS",
+      "check": "text 'Simulated demo \u00b7 contracts not dep' (cta)",
+      "detail": "rendered 90px (floor 48), contrast 25.67:1 at t=20.1s"
+    },
+    {
+      "level": "PASS",
+      "check": "text 'quench \u2014 Your yield pays the loan.' (hook)",
+      "detail": "rendered 200px (floor 84), contrast 31.29:1 at t=1.6s"
+    },
+    {
+      "level": "PASS",
+      "check": "text 'Loans: Add 200 stINJ \u00b7 borrow 90 q' (term)",
+      "detail": "rendered 100px (floor 48), contrast 15.82:1 at t=5.8s"
+    },
+    {
+      "level": "PASS",
+      "check": "text '90.00 qINJ \u00b7 LTV 45.10%' (term)",
+      "detail": "rendered 100px (floor 48), contrast 16.50:1 at t=10.8s"
+    },
+    {
+      "level": "PASS",
+      "check": "text 'Positions: Debt 90.00 \u2192 0.00 qINJ' (term)",
+      "detail": "rendered 100px (floor 48), contrast 19.47:1 at t=16.5s"
+    },
+    {
+      "level": "PASS",
+      "check": "text 'Debt 0.00 qINJ \u2014 withdraw' (term)",
+      "detail": "rendered 100px (floor 48), contrast 21.11:1 at t=23.0s"
+    },
+    {
+      "level": "PASS",
+      "check": "text 'Swap: 10 qINJ \u2192 9.95 stINJ \u00b7 worst' (term)",
+      "detail": "rendered 100px (floor 48), contrast 18.33:1 at t=29.5s"
+    },
+    {
+      "level": "PASS",
+      "check": "text 'APR 7.53% assumption \u00b7 fees 0.50%' (term)",
+      "detail": "rendered 100px (floor 48), contrast 26.16:1 at t=34.5s"
+    }
+  ]
+}

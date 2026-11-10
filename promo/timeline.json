@@ -1,0 +1,254 @@
+{
+  "meta": {
+    "dur": 40,
+    "fps": 30,
+    "w": 1920,
+    "h": 1080,
+    "clock": "voice",
+    "bpm": 120,
+    "meter": "4/4",
+    "loop": false
+  },
+  "scenes": [
+    {
+      "id": "hook",
+      "start": 0,
+      "end": 3,
+      "beats": {
+        "drop": 0
+      }
+    },
+    {
+      "id": "deposit",
+      "start": 3,
+      "end": 8,
+      "beats": {
+        "type": 3.5,
+        "confirm": 7
+      }
+    },
+    {
+      "id": "mint",
+      "start": 8,
+      "end": 13,
+      "beats": {
+        "type": 8.5,
+        "confirm": 12
+      }
+    },
+    {
+      "id": "harvest",
+      "start": 13,
+      "end": 19,
+      "beats": {
+        "fall": 14,
+        "zero": 19
+      }
+    },
+    {
+      "id": "withdraw",
+      "start": 19,
+      "end": 26,
+      "beats": {
+        "zero": 20,
+        "confirm": 24
+      }
+    },
+    {
+      "id": "redeem",
+      "start": 26,
+      "end": 32,
+      "beats": {
+        "type": 27,
+        "confirm": 30.5
+      }
+    },
+    {
+      "id": "trust",
+      "start": 32,
+      "end": 36,
+      "beats": {
+        "assumption": 33
+      }
+    },
+    {
+      "id": "end",
+      "start": 36,
+      "end": 40,
+      "beats": {
+        "mark": 36.5
+      }
+    }
+  ],
+  "hero": {
+    "t": 21,
+    "what": "debt counter hits 0.00"
+  },
+  "silences": [
+    {
+      "from": 18.5,
+      "to": 19.5
+    }
+  ],
+  "texts": [
+    {
+      "role": "cta",
+      "text": "Simulated demo · contracts not deployed",
+      "from": 0.2,
+      "to": 40,
+      "px": 48,
+      "box": [
+        96,
+        20,
+        1728,
+        110
+      ]
+    },
+    {
+      "role": "hook",
+      "text": "quench — Your yield pays the loan.",
+      "from": 0.2,
+      "to": 3,
+      "px": 84,
+      "box": [
+        96,
+        220,
+        1400,
+        420
+      ]
+    },
+    {
+      "role": "term",
+      "text": "Loans: Add 200 stINJ · borrow 90 qINJ",
+      "from": 3.5,
+      "to": 8,
+      "px": 48,
+      "box": [
+        96,
+        220,
+        1400,
+        320
+      ]
+    },
+    {
+      "role": "term",
+      "text": "90.00 qINJ · LTV 45.10%",
+      "from": 8.5,
+      "to": 13,
+      "px": 48,
+      "box": [
+        96,
+        220,
+        1400,
+        320
+      ]
+    },
+    {
+      "role": "term",
+      "text": "Positions: Debt 90.00 → 0.00 qINJ",
+      "from": 14,
+      "to": 19,
+      "px": 48,
+      "box": [
+        96,
+        220,
+        1400,
+        320
+      ]
+    },
+    {
+      "role": "term",
+      "text": "Debt 0.00 qINJ — withdraw",
+      "from": 20,
+      "to": 26,
+      "px": 48,
+      "box": [
+        96,
+        220,
+        1400,
+        320
+      ]
+    },
+    {
+      "role": "term",
+      "text": "Swap: 10 qINJ → 9.95 stINJ · worst case 7 days",
+      "from": 27,
+      "to": 32,
+      "px": 48,
+      "box": [
+        96,
+        220,
+        1400,
+        320
+      ]
+    },
+    {
+      "role": "term",
+      "text": "APR 7.53% assumption · fees 0.50%",
+      "from": 33,
+      "to": 36,
+      "px": 48,
+      "box": [
+        96,
+        220,
+        1400,
+        320
+      ]
+    }
+  ],
+  "captions": [
+    {
+      "from": 0.2,
+      "to": 3.0,
+      "text": "Your yield pays the loan."
+    },
+    {
+      "from": 3.2,
+      "to": 7.6,
+      "text": "Deposit a yield-bearing INJ LST into the Basin."
+    },
+    {
+      "from": 8.2,
+      "to": 12.4,
+      "text": "Borrow up to fifty percent of its value as qINJ."
+    },
+    {
+      "from": 13.2,
+      "to": 17.8,
+      "text": "Wellspring routes the staking yield to the debt."
+    },
+    {
+      "from": 18.2,
+      "to": 21.2,
+      "text": "Ninety qINJ falls to zero."
+    },
+    {
+      "from": 21.6,
+      "to": 25.6,
+      "text": "At zero debt, withdraw the collateral."
+    },
+    {
+      "from": 26.2,
+      "to": 30.8,
+      "text": "Redeem qINJ for LST units. Worst case, seven days."
+    },
+    {
+      "from": 31.2,
+      "to": 35.0,
+      "text": "Assumptions, not promises."
+    },
+    {
+      "from": 36.2,
+      "to": 39.5,
+      "text": "Simulated demo. Contracts not deployed."
+    }
+  ],
+  "terms": [
+    "quench",
+    "qINJ",
+    "Loans",
+    "Positions",
+    "Swap",
+    "stINJ"
+  ]
+}

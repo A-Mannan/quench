@@ -4,6 +4,7 @@ import { ONE } from '../types';
 import {
   collateralValueOf,
   createInitialState,
+  depositAndMintState,
   depositState,
   drainBufferState,
   dropRateState,
@@ -12,11 +13,14 @@ import {
   harvestState,
   isLiquidationEligible,
   liquidateState,
+  ltvBpsOf,
   makeStaleState,
   maxDebtOf,
   mintState,
   pausedMintsOf,
   redeemState,
+  repayState,
+  selfLiquidateState,
   setWrongNetworkState,
   toSnapshot,
   withdrawState,
@@ -42,10 +46,74 @@ describe('fixed-point engine', () => {
     expect(state.debtQinj).toBeLessThanOrEqual(maxDebtOf(state));
   });
 
+  it('applies combined collateral and debt changes atomically', () => {
+    const initial = createInitialState();
+    const state = depositAndMintState(initial, 100n * ONE, 49n * ONE);
+
+    expect(state.walletLst).toBe(initial.walletLst - 100n * ONE);
+    expect(state.collateralLst).toBeLessThan(100n * ONE);
+    expect(state.debtQinj).toBe(49n * ONE);
+    expect(state.qinjBalance).toBe(49n * ONE);
+    expect(state.debtQinj).toBeLessThanOrEqual(maxDebtOf(state));
+    expect(state.events.map((event) => event.type)).toEqual(['deposit', 'mint']);
+  });
+
+  it('keeps a deposit-only loan action when no debt is requested', () => {
+    const initial = createInitialState();
+    const state = depositAndMintState(initial, 75n * ONE, 0n);
+
+    expect(state.collateralLst).toBe(75n * ONE);
+    expect(state.debtQinj).toBe(0n);
+    expect(state.events.map((event) => event.type)).toEqual(['deposit']);
+  });
+
   it('blocks a mint above maxLTV', () => {
     let state = createInitialState();
     state = depositState(state, 100n * ONE);
     expect(() => mintState(state, 50n * ONE)).toThrow(/maximum LTV/);
+  });
+
+  it('burns a voluntary qINJ repayment against part of the debt', () => {
+    let state = withPosition(100n, 20n);
+    state = repayState(state, 5n * ONE);
+
+    expect(state.qinjBalance).toBe(15n * ONE);
+    expect(state.debtQinj).toBe(15n * ONE);
+    expect(state.events.at(-1)?.type).toBe('repay');
+    expect(state.history.at(-1)?.kind).toBe('repay');
+  });
+
+  it('burns returned qINJ against debt without consuming yield', () => {
+    let state = withPosition(100n, 20n);
+    state = repayState(state, 5n * ONE);
+
+    expect(state.debtQinj).toBe(15n * ONE);
+    expect(state.qinjBalance).toBe(15n * ONE);
+    expect(state.history.at(-1)?.kind).toBe('repay');
+  });
+
+  it('self-liquidates a solvent position and returns residual collateral', () => {
+    let state = withPosition(100n, 20n);
+    state = selfLiquidateState(state);
+
+    expect(state.debtQinj).toBe(0n);
+    expect(state.qinjBalance).toBe(0n);
+    expect(state.collateralLst).toBe(0n);
+    expect(state.walletLst).toBeGreaterThan(0n);
+    expect(state.badDebtInj).toBe(0n);
+    expect(state.history.at(-1)?.kind).toBe('self-liquidate');
+  });
+
+  it('records bad debt when self-liquidation cannot cover the debt', () => {
+    const initial = createInitialState();
+    initial.collateralLst = 10n * ONE;
+    initial.debtQinj = 20n * ONE;
+    initial.qinjBalance = 0n;
+    const state = selfLiquidateState(initial);
+
+    expect(state.debtQinj).toBe(0n);
+    expect(state.badDebtInj).toBe(10n * ONE);
+    expect(state.liquidated).toBe(true);
   });
 
   it('burns qINJ from the wallet and reduces debt by the same value', () => {
@@ -76,6 +144,16 @@ describe('fixed-point engine', () => {
     expect(state.debtQinj).toBeGreaterThanOrEqual(0n);
   });
 
+  it('withdraws only part of collateral while the remaining position stays solvent', () => {
+    const initial = withPosition(100n, 20n);
+    const partial = withdrawState(initial, 25n * ONE);
+
+    expect(partial.collateralLst).toBe(initial.collateralLst - 25n * ONE);
+    expect(partial.walletLst).toBe(initial.walletLst + 25n * ONE);
+    expect(ltvBpsOf(partial)).toBeLessThanOrEqual(PROTOCOL_CONFIG.maxLtvBps);
+    expect(() => withdrawState(initial, 75n * ONE)).toThrow(/push LTV above the maximum/);
+  });
+
   it('conserves deposits between wallet and Basin', () => {
     let state = createInitialState();
     const walletBefore = state.walletLst;
@@ -90,7 +168,7 @@ describe('fixed-point engine', () => {
     state = dropRateState(state, 6_000);
     expect(isLiquidationEligible(state)).toBe(true);
     expect(pausedMintsOf(state)).toBe(true);
-    expect(() => withdrawState(state, ONE)).toThrow(/zero debt/);
+    expect(() => withdrawState(state, ONE)).toThrow(/paused/);
     expect(() => mintState(state, ONE)).toThrow(/paused/);
 
     const redeemed = redeemState(state, 5n * ONE);

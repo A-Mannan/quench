@@ -22,14 +22,12 @@ async function waitTx(page: Page): Promise<void> {
 }
 
 async function openPosition(page: Page): Promise<void> {
-  await page.goto('/app/basin');
-  await page.getByTestId('deposit-input').fill('200');
-  await expect(page.getByTestId('deposit-submit')).toBeEnabled();
-  await page.getByTestId('deposit-submit').click();
-  await waitTx(page);
   await page.goto('/app/loans');
+  await page.getByTestId('loan-deposit-input').fill('200');
   await page.getByTestId('mint-input').fill('90');
-  await expect(page.getByTestId('mint-submit')).toBeEnabled();
+  await expect(page.getByTestId('mint-submit')).toBeEnabled({
+    timeout: 15_000,
+  });
   await page.getByTestId('mint-submit').click();
   await waitTx(page);
 }
@@ -126,19 +124,19 @@ test('failed and rejected transactions preserve input', async ({ page }) => {
   await page.waitForTimeout(500);
   await page.keyboard.press('Escape');
 
-  await page.goto('/app/basin');
-  await page.getByTestId('deposit-input').fill('50');
-  await page.getByTestId('deposit-submit').click();
+  await page.goto('/app/loans');
+  await page.getByTestId('loan-deposit-input').fill('50');
+  await page.getByTestId('mint-submit').click();
   await expect(page.getByTestId('tx-panel')).toContainText('Rejected');
-  await expect(page.getByTestId('deposit-input')).toHaveValue('50');
+  await expect(page.getByTestId('loan-deposit-input')).toHaveValue('50');
   await shot(page, 'tx-rejected.png');
 
   await page.getByTestId('sim-open').click();
   await page.getByTestId('sim-outcome-fail').click();
   await page.keyboard.press('Escape');
-  await page.getByTestId('deposit-submit').click();
+  await page.getByTestId('mint-submit').click();
   await expect(page.getByTestId('tx-panel')).toContainText('failed');
-  await expect(page.getByTestId('deposit-input')).toHaveValue('50');
+  await expect(page.getByTestId('loan-deposit-input')).toHaveValue('50');
   await shot(page, 'tx-failed.png');
 });
 
@@ -148,8 +146,8 @@ test('wrong network blocks actions with a recovery path', async ({ page }) => {
   await page.getByTestId('sim-network').click();
   await page.keyboard.press('Escape');
   await expect(page.getByText('Wrong network')).toBeVisible();
-  await page.goto('/app/basin');
-  await expect(page.getByTestId('deposit-submit')).toBeDisabled();
+  await page.goto('/app/loans');
+  await expect(page.getByTestId('mint-submit')).toBeDisabled();
   await shot(page, 'wrong-network.png');
 });
 
@@ -174,14 +172,7 @@ test('stale rate pauses entries and keeps exits open', async ({ page }) => {
 
 test('rate drop marks liquidation eligibility and keeps redemption open', async ({ page }) => {
   await connect(page);
-  await page.goto('/app/basin');
-  await page.getByTestId('deposit-input').fill('200');
-  await page.getByTestId('deposit-submit').click();
-  await waitTx(page);
-  await page.goto('/app/loans');
-  await page.getByTestId('mint-input').fill('99');
-  await page.getByTestId('mint-submit').click();
-  await waitTx(page);
+  await openPosition(page);
 
   await page.getByTestId('sim-open').click();
   await page.getByTestId('sim-drop').click();

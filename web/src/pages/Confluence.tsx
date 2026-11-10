@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { ArrowDown, ArrowUpRight } from '@phosphor-icons/react';
+import { ArrowDown } from '@phosphor-icons/react';
 import { useQuench, ONE } from '../client';
-import { bpsOf, formatAmount, formatDateTime, mulDiv, parseTokenInput } from '../client/math';
+import { bpsOf, formatAmount, formatDateTime, formatPct, mulDiv, parseTokenInput } from '../client/math';
 import { useAction } from '../lib/useAction';
 import { Banner } from '../components/Banner';
 import { Button, ButtonLink } from '../components/Button';
@@ -49,20 +49,20 @@ export default function Confluence() {
       ) : null}
 
       <section className="card" aria-label="Swap">
-        <InstrumentBar crumb="Confluence / 01" chainId={snapshot.chainId} />
+        <InstrumentBar crumb="Swap" chainId={snapshot.chainId} />
         <h2 className="loan-head">Swap</h2>
         {snapshot.position.qinjBalance === 0n ? (
-          <>
-            <h2>Nothing to redeem</h2>
+          <div className="swap-empty">
+            <p className="swap-empty__title">Nothing to redeem</p>
             <p className="muted">Borrow qINJ first.</p>
             <ButtonLink to="/app/loans" full size="lg">
               Borrow qINJ
             </ButtonLink>
-          </>
+          </div>
         ) : (
           <>
             <div>
-              <span className="field-label">How much you want to swap?</span>
+              <span className="field-label">Amount to swap</span>
               <div className={`token-box amount-field__control${redeemError ? ' amount-field--error' : ''}`}>
                 <div className="token-box__row">
                   <input
@@ -74,6 +74,7 @@ export default function Confluence() {
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                     placeholder="0.00"
+                    aria-label="Amount to swap"
                     aria-invalid={redeemError ? true : undefined}
                     data-testid="redeem-input"
                   />
@@ -82,7 +83,7 @@ export default function Confluence() {
                   </span>
                 </div>
                 <div className="token-box__sub">
-                  <span>Balance: {formatAmount(snapshot.position.qinjBalance, 2)}</span>
+                  <span>Balance {formatAmount(snapshot.position.qinjBalance, 2)}</span>
                   <button type="button" className="chip" onClick={() => setInput(formatAmount(snapshot.position.qinjBalance, 18))}>
                     Max
                   </button>
@@ -98,7 +99,7 @@ export default function Confluence() {
             </div>
 
             <span className="field-label">You receive</span>
-            <div className="token-box token-box--out">
+            <div className={`token-box${amount > 0n ? ' token-box--out' : ''}`}>
               <div className="token-box__row">
                 <span className="token-box__num">{formatAmount(lstOut, 4)}</span>
                 <span className="token-pill">
@@ -106,15 +107,25 @@ export default function Confluence() {
                 </span>
               </div>
               <div className="token-box__sub">
-                <span>Fee {formatAmount(fee, 2)} qINJ</span>
+                <span>
+                  {amount > 0n
+                    ? `Fee ${formatAmount(fee, 2)} qINJ`
+                    : `Fee ${formatPct(snapshot.config.redeemFeeBps)}`}
+                </span>
                 <span>Buffer {formatAmount(snapshot.protocol.bufferLst, 0)} stINJ</span>
               </div>
             </div>
 
-            <p className="info-bar">
-              Your {formatAmount(amount, 2)} qINJ is expected to be swapped to stINJ in{' '}
-              {snapshot.config.redemptionDelayDays} days.
-            </p>
+            {amount === 0n ? (
+              <p className="info-bar">
+                Redeem qINJ for stINJ. Paid from the buffer, or queued up to{' '}
+                {snapshot.config.redemptionDelayDays} days.
+              </p>
+            ) : willQueue ? null : (
+              <p className="info-bar">
+                Buffer covers this redemption. stINJ pays on confirm.
+              </p>
+            )}
 
             {willQueue && amount > 0n ? (
               <Banner tone="warn" title="This redemption will queue" compact>
@@ -129,7 +140,7 @@ export default function Confluence() {
               loading={busy === 'redeem'}
               disabled={!canRedeem}
               data-testid="redeem-submit"
-              iconRight={<ArrowUpRight size={18} weight="bold" aria-hidden="true" />}
+              iconRight={false}
             >
               Redeem qINJ
             </Button>
@@ -139,7 +150,7 @@ export default function Confluence() {
 
       {snapshot.redemptions.length > 0 ? (
         <section className="card" aria-label="Redemptions">
-          <InstrumentBar crumb="Confluence / 02" chainId={snapshot.chainId} />
+          <InstrumentBar crumb="Swap / redemptions" chainId={snapshot.chainId} />
           <h2>Redemptions</h2>
           <ul className="simple-list">
             {snapshot.redemptions.map((redemption) => (

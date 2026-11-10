@@ -8,9 +8,12 @@ export type TxKind =
   | 'connect'
   | 'deposit'
   | 'mint'
+  | 'loan'
+  | 'repay'
   | 'harvest'
   | 'redeem'
   | 'withdraw'
+  | 'self-liquidate'
   | 'liquidate';
 export type TxStatus = 'idle' | 'pending' | 'confirmed' | 'failed' | 'rejected';
 export type TxOutcome = 'success' | 'reject' | 'fail';
@@ -33,6 +36,8 @@ export interface HistoryPoint {
     | 'start'
     | 'deposit'
     | 'mint'
+    | 'repay'
+    | 'self-liquidate'
     | 'harvest'
     | 'redeem'
     | 'withdraw'
@@ -180,6 +185,9 @@ export interface QuenchClient {
   connect(): Promise<void>;
   refresh(): Promise<void>;
   deposit(amount: bigint): Promise<TxReceipt>;
+  depositAndMint(depositAmount: bigint, amount: bigint): Promise<TxReceipt>;
+  repay(amount: bigint): Promise<TxReceipt>;
+  selfLiquidate(): Promise<TxReceipt>;
   mint(amount: bigint): Promise<TxReceipt>;
   harvest(): Promise<TxReceipt>;
   redeem(amount: bigint): Promise<TxReceipt>;

@@ -227,3 +227,15 @@ User: "landing is good, but the app still does not look." Reshoot review of all 
 **Real bugs fixed:** over-balance forms computed impossible consequences with no field error and a silently-dead submit (now per-field cause + recovery on all four amount forms, consequence tone turns danger under error) · vessel gauge tick `100` next to 199.55 (now `100%`) · `.segmented` selection in ink black (now cobalt) · rail LTV two-line wrap · crumb uppercase contradicting the logotype · press `translateY` → `scale(0.98)`.
 
 **Gates (v11):** `npm run typecheck` → 0; `npm run lint` → 0; `npm test` → **12/12**; `npx playwright test` → **33/33 passed in 54.7s** (axe 0). Shots: `web/screenshots/v11/` (88 audit captures) + `web/screenshots/v11/final/` (landing heroes, logo lockups, error state, populated overview). Landing untouched. `build-quench-mvp` remains paused at G1; nothing created outside `web/`.
+
+## V12 addendum (2026-11-10): compact instrument + swap polish
+
+User: "shrink the info inside the positions and loans widget. its getting too long." Verdict: shrink, don't strip — every figure kept, the frame compressed.
+
+- **Loans / Withdraw:** stacked `after-panel` (head + three full-width rows + footnote) → 3-column `after-strip` (head with live dot + fee, Collateral/Debt/LTV with deltas, headroom + LTV bar). The fee appears only when there is an input.
+- **Positions:** dropped "Staking yield pays the loan down."; Harvest moved inline with the status pill; Repay input and button share one row (stacking at ≤480px, where the inline row cannot fit); Swap + Self-liquidate share one footer row. Card height ~1000 → ~520 px at 1440.
+- **Swap:** single heading (the empty state is no longer a second `h2`), the output box takes the accent only when it has a value, `Fee 0.50%` at rest, buffer-aware info copy (no "Your 0.00 qINJ…"), `Balance` wording matched to Positions, `aria-label` on the input.
+- **Chrome:** removed decorative `/ 01` sheet numbers (`Loans`, `Positions`, `Swap / redemptions`, `Positions / withdraw`, and the landing hero mock `Basin`) and `↗` icons from transaction buttons; navigation links keep their arrows.
+- **Repay proportion:** a stretched `size="sm"` button read as a square; now 96×46 inline, full-width below 480px.
+
+**Gates (v31):** `pnpm typecheck` → 0; `pnpm lint` → 0; `pnpm build` → OK; `pnpm test` → **19/19**; `pnpm e2e` → **33/33 passed** (axe 0). Film re-rendered from fresh 2× captures; measured gates in `docs/promo/QA.md`. `build-quench-mvp` untouched.

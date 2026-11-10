@@ -23,7 +23,7 @@ export function BufferGauge({
     <div className={`buffer${low ? ' buffer--low' : ''}${compact ? ' buffer--compact' : ''}`}>
       <div className="buffer__top">
         <div>
-          <div className="buffer__label">Confluence buffer</div>
+          <div className="buffer__label">Swap buffer</div>
           <div className="buffer__value">
             {formatAmount(bufferLst, 0)} <span>stINJ</span>
           </div>
@@ -35,7 +35,7 @@ export function BufferGauge({
       <div
         className="buffer__track"
         role="progressbar"
-        aria-label="Confluence buffer against its target"
+        aria-label="Swap buffer against its target"
         aria-valuemin={0}
         aria-valuemax={100}
         aria-valuenow={Math.round(ratio)}

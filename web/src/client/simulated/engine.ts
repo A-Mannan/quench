@@ -256,6 +256,29 @@ export function mintState(state: SimState, amount: bigint): SimState {
   return next;
 }
 
+export function depositAndMintState(
+  state: SimState,
+  depositAmount: bigint,
+  mintAmount: bigint,
+): SimState {
+  assertActive(state, 'loan');
+  assertFreshRate(state, 'loan');
+  assertNotLiquidating(state, 'loan');
+  if (depositAmount < 0n || mintAmount < 0n) {
+    throw new Error('Enter an amount greater than or equal to zero.');
+  }
+  if (depositAmount === 0n && mintAmount === 0n) {
+    throw new Error('Add collateral or borrow an amount greater than zero.');
+  }
+  if (depositAmount > 0n && depositAmount > state.walletLst) {
+    throw new Error('Amount exceeds the simulated wallet balance.');
+  }
+
+  let next = depositAmount > 0n ? depositState(state, depositAmount) : state;
+  if (mintAmount > 0n) next = mintState(next, mintAmount);
+  return next;
+}
+
 export function harvestState(state: SimState): SimState {
   assertActive(state, 'harvest');
   assertFreshRate(state, 'harvest');
@@ -318,6 +341,31 @@ export function harvestState(state: SimState): SimState {
   return next;
 }
 
+export function repayState(state: SimState, amount: bigint): SimState {
+  assertActive(state, 'repay');
+  if (amount <= 0n) throw new Error('Enter an amount greater than zero.');
+  if (amount > state.qinjBalance) {
+    throw new Error('Amount exceeds the qINJ wallet balance.');
+  }
+  if (amount > state.debtQinj) {
+    throw new Error('Amount exceeds the debt being repaid.');
+  }
+
+  const next = cloneState(state);
+  next.qinjBalance -= amount;
+  next.debtQinj -= amount;
+  recordHistory(next, 'repay');
+  addEvent(next, {
+    type: 'repay',
+    title: 'qINJ repaid',
+    detail: `${amount / ONE} qINJ burned against the debt. Collateral unchanged.`,
+    amount,
+    unit: 'qINJ',
+    status: 'confirmed',
+  });
+  return next;
+}
+
 export function redeemState(state: SimState, amount: bigint): SimState {
   assertActive(state, 'redeem');
   if (amount <= 0n) throw new Error('Enter an amount greater than zero.');
@@ -366,9 +414,26 @@ export function redeemState(state: SimState, amount: bigint): SimState {
 
 export function withdrawState(state: SimState, amount: bigint): SimState {
   assertActive(state, 'withdraw');
-  if (state.debtQinj !== 0n) throw new Error('Withdraw unlocks only at zero debt.');
+  if (state.debtQinj > 0n) {
+    assertFreshRate(state, 'withdraw');
+    assertNotLiquidating(state, 'withdraw');
+  }
   if (amount <= 0n) throw new Error('Enter an amount greater than zero.');
   if (amount > state.collateralLst) throw new Error('Amount exceeds Basin collateral.');
+  if (state.debtQinj > 0n) {
+    const remainingCollateral = state.collateralLst - amount;
+    const remainingValue = mulDiv(remainingCollateral, state.rate, ONE);
+    const maxDebtAfter = mulDiv(
+      remainingValue,
+      BigInt(PROTOCOL_CONFIG.maxLtvBps),
+      10_000n,
+    );
+    if (state.debtQinj > maxDebtAfter) {
+      throw new Error(
+        'That withdrawal would push LTV above the maximum. Lower the amount or repay debt first.',
+      );
+    }
+  }
   const next = cloneState(state);
   next.collateralLst -= amount;
   next.walletLst += amount;
@@ -407,6 +472,51 @@ export function liquidateState(state: SimState): SimState {
     amount: next.badDebtInj,
     unit: 'INJ',
     status: 'warning',
+  });
+  return next;
+}
+
+export function selfLiquidateState(state: SimState): SimState {
+  assertActive(state, 'self-liquidate');
+  if (state.debtQinj <= 0n || state.collateralLst <= 0n) {
+    throw new Error('Only an open position can be self-liquidated.');
+  }
+  if (state.rate <= 0n) throw new Error('Exchange rate is not available.');
+
+  const next = cloneState(state);
+  const qinjBurned = minBigInt(next.qinjBalance, next.debtQinj);
+  next.qinjBalance -= qinjBurned;
+  const remainingDebt = next.debtQinj - qinjBurned;
+  const collateralValue = collateralValueOf(next);
+  const collateralUsedToClear = minBigInt(remainingDebt, collateralValue);
+  const collateralUsed =
+    collateralUsedToClear === 0n
+      ? 0n
+      : collateralUsedToClear === collateralValue
+        ? next.collateralLst
+        : (collateralUsedToClear * ONE + next.rate - 1n) / next.rate;
+  const badDebt = remainingDebt > collateralValue ? remainingDebt - collateralValue : 0n;
+  const residualCollateral = next.collateralLst - collateralUsed;
+
+  next.treasuryLst += collateralUsed;
+  next.walletLst += residualCollateral;
+  next.collateralLst = 0n;
+  next.debtQinj = 0n;
+  if (badDebt > 0n) {
+    next.badDebtInj = badDebt > next.badDebtInj ? badDebt : next.badDebtInj;
+    next.liquidated = true;
+  }
+  recordHistory(next, 'self-liquidate');
+  addEvent(next, {
+    type: 'self-liquidate',
+    title: 'Position self-liquidated',
+    detail:
+      badDebt > 0n
+        ? `${qinjBurned / ONE} qINJ and ${collateralUsed / ONE} stINJ collateral closed the position; ${badDebt / ONE} INJ remains as bad debt.`
+        : `${qinjBurned / ONE} qINJ and ${collateralUsed / ONE} stINJ settled the position; ${residualCollateral / ONE} stINJ returned.`,
+    amount: badDebt,
+    unit: 'INJ',
+    status: badDebt > 0n ? 'warning' : 'confirmed',
   });
   return next;
 }

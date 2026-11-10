@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[{"id":"disclosure","type":"string","label":"Disclosure","default":"Simulated demo · contracts not deployed"}]'>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      @font-face {
+        font-family: "Schibsted Grotesk";
+        src: url("assets/fonts/schibsted-grotesk-latin-wght-normal.woff2") format("woff2");
+        font-weight: 100 900;
+        font-style: normal;
+        font-display: swap;
+      }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { margin: 0; width: 1920px; height: 1080px; overflow: hidden; background: #090b0f; }
+      #root { position: relative; width: 1920px; height: 1080px; overflow: hidden; background: #090b0f; font-family: "Schibsted Grotesk", system-ui, sans-serif; color: #e8ecf4; }
+      .clip { position: absolute; inset: 0; }
+      .bg { position: absolute; inset: 0; background:
+        radial-gradient(1200px 700px at 50% -10%, rgba(46,91,255,0.10), rgba(46,91,255,0) 60%),
+        linear-gradient(#090b0f, #090b0f); }
+      .grid { position: absolute; inset: 0; opacity: 1;
+        background-image: linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+        background-size: 48px 48px; }
+      .bar { position: absolute; left: 0; right: 0; top: 0; height: 104px; display: flex; align-items: center; justify-content: space-between; padding: 0 56px; border-bottom: 1px solid rgba(255,255,255,0.10); z-index: 40; background: rgba(9,11,15,0.82); }
+      .brand { font-size: 44px; font-weight: 600; letter-spacing: -0.02em; color: #f2f5fb; }
+      .disclosure { font-family: "JetBrains Mono", monospace; font-size: 48px; color: #c3cad9; letter-spacing: 0.04em; }
+      .disclosure b { color: #a9c2ff; }
+      .chain { font-family: "JetBrains Mono", monospace; font-size: 28px; color: #aab4c8; }
+      .shot { position: absolute; right: 64px; top: 140px; bottom: 170px; width: 60%; display: flex; align-items: center; justify-content: center; }
+      .shot img { max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; border: 1px solid rgba(255,255,255,0.14); box-shadow: 0 24px 80px rgba(0,0,0,0.45); }
+      .panel { position: absolute; left: 96px; top: 200px; width: 560px; padding: 8px 0 8px 28px; border-left: 3px solid #2e5bff; }
+      .kicker { font-family: "JetBrains Mono", monospace; font-size: 24px; letter-spacing: 0.18em; color: #8b96ab; }
+      .title { font-size: 96px; line-height: 1.02; font-weight: 600; letter-spacing: -0.02em; color: #f2f5fb; margin-top: 12px; }
+      .title em { font-style: normal; color: #7fa0ff; }
+      .term { font-family: "JetBrains Mono", monospace; font-size: 44px; color: #f2f5fb; margin-top: 10px; }
+      .term b { color: #7fa0ff; font-weight: 600; }
+      .counter { position: absolute; left: 96px; bottom: 230px; text-align: left; }
+      .counter .n { font-family: "JetBrains Mono", monospace; font-size: 120px; font-weight: 600; color: #7fa0ff; line-height: 1; }
+      .counter .u { font-family: "JetBrains Mono", monospace; font-size: 28px; color: #8b96ab; }
+      .label-run { position: absolute; left: 96px; bottom: 180px; font-family: "JetBrains Mono", monospace; font-size: 36px; font-weight: 600; color: #ffd479; border: 1px solid rgba(255,212,121,0.45); padding: 10px 18px; background: rgba(9,11,15,0.8); }
+      .rail { top: auto !important; bottom: 40px !important; left: 50% !important; right: auto !important; width: 1680px; margin-left: -840px; padding: 18px 28px; background: rgba(9,11,15,0.88); border: 1px solid rgba(255,255,255,0.14); font-size: 56px; font-weight: 500; color: #f2f5fb; text-align: center; }
+      .trust { position: absolute; inset: 120px 260px 140px 260px; background: #edf0f6; color: #101623; padding: 56px 64px; border: 1px solid rgba(16,22,35,0.2); }
+      .trust .kicker { color: #5a6a86; }
+      .trust h2 { font-size: 72px; letter-spacing: -0.02em; margin-top: 10px; }
+      .rows { margin-top: 36px; border-top: 2px solid #101623; }
+      .row { display: flex; justify-content: space-between; padding: 22px 0; border-bottom: 1px solid rgba(16,22,35,0.18); font-size: 40px; }
+      .row b { font-family: "JetBrains Mono", monospace; }
+      .note { font-size: 32px; color: #3d4a63; margin-top: 28px; }
+      .end { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 26px; z-index: 30; }
+      .mark { font-family: "JetBrains Mono", monospace; font-size: 56px; color: #7fa0ff; }
+      .word { font-size: 140px; font-weight: 600; letter-spacing: -0.03em; color: #f2f5fb; }
+      .end .dis { font-size: 56px; color: #f2f5fb; }
+      .src { font-family: "JetBrains Mono", monospace; font-size: 28px; color: #8b96ab; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="40" data-width="1920" data-height="1080">
+
+      <div id="clip-01" class="clip" data-start="0" data-duration="40" data-track-index="0" style="z-index:0"><div class="bg"></div><div class="grid"></div></div>
+
+      <div id="clip-02" class="clip" data-start="0" data-duration="40" data-track-index="1" style="z-index:40">
+        <div class="bar">
+          <div class="brand"><svg width="34" height="34" viewBox="0 0 24 24" aria-hidden="true" fill="none" style="vertical-align:-6px"><path d="M12 3.2C12 3.2 5.6 10.2 5.6 14.4a6.4 6.4 0 0 0 12.8 0C18.4 10.2 12 3.2 12 3.2Z" stroke="#7fa0ff" stroke-width="2.1"/><path d="M8.8 15.2h6.4" stroke="#7fa0ff" stroke-width="1.7" stroke-linecap="square"/></svg> quench</div>
+          <div class="disclosure"><b>Simulated demo</b> · contracts not deployed</div>
+          <div class="chain">TESTNET 1439</div>
+        </div>
+      </div>
+
+      <!-- hook 0-3 -->
+      <div id="clip-03" class="clip" data-start="0" data-duration="3" data-track-index="2" style="z-index:10">
+        <div class="shot"><img id="s-hook-img" src="capture/06-pos-90-card.png" alt="Position with a 90.00 qINJ debt" /></div>
+        <div class="panel"><div class="kicker">QUENCH · SELF-REPAYING LOAN</div><div id="s-hook-title" class="title">Your yield <em>pays</em> the loan.</div><div class="term"><b>90.00 qINJ</b> debt, collateral 199.55 stINJ</div></div>
+        <div class="counter"><div id="s-hook-n" class="n">90.00</div><div class="u">DEBT · qINJ</div></div>
+      </div>
+
+      <!-- deposit 3-8 -->
+      <div id="clip-04" class="clip" data-start="3" data-duration="5" data-track-index="2" style="z-index:10">
+        <div class="shot"><img id="s-dep-img" src="capture/03-loans-filled.png" alt="Loans card with 200 stINJ and 90 qINJ typed" /></div>
+        <div class="panel"><div class="kicker">LOANS · ADD</div><div class="term"><b>Add 200 stINJ</b> · borrow 90 qINJ</div></div>
+      </div>
+
+      <!-- mint 8-13 -->
+      <div id="clip-05" class="clip" data-start="8" data-duration="5" data-track-index="2" style="z-index:10">
+        <div class="shot" style="transform: scale(1.28) translateY(4%); transform-origin: 50% 62%;"><img id="s-mint-img" src="capture/04-loans-minted.png" alt="Loans card after borrowing 90 qINJ" /></div>
+        <div class="panel"><div class="kicker">LOANS · BORROW</div><div class="term"><b>90.00 qINJ</b> · LTV 45.10%</div></div>
+      </div>
+
+      <!-- harvest 13-19 -->
+      <div id="clip-06" class="clip" data-start="13" data-duration="6" data-track-index="2" style="z-index:10">
+        <div class="shot"><img id="s-har-img" src="capture/08-pos-after-1y-card.png" alt="Position after one simulated year" /></div>
+        <div class="panel"><div class="kicker">POSITIONS · HARVEST</div><div class="term">Debt <b>90.00 → 74.44 qINJ</b> · 1 year at 7.53%</div></div>
+        <div class="counter"><div id="s-har-n" class="n">74.44</div><div class="u">DEBT · qINJ</div></div>
+      </div>
+
+      <!-- zero 19-21 (hero) -->
+      <div id="clip-07" class="clip" data-start="19" data-duration="2" data-track-index="2" style="z-index:10">
+        <div class="shot"><img id="s-zero-img" src="capture/12-pos-zero-card.png" alt="Position at zero debt" /></div>
+        <div class="panel"><div class="kicker">POSITIONS · ZERO</div><div class="title" style="font-size:64px">Debt is zero.</div></div>
+      </div>
+
+      <!-- withdraw 21-26 -->
+      <div id="clip-08" class="clip" data-start="21" data-duration="5" data-track-index="2" style="z-index:10">
+        <div class="shot"><img id="s-wd-img" src="capture/13-basin-withdraw-filled.png" alt="Withdraw card" /></div>
+        <div class="panel"><div class="kicker">POSITIONS · WITHDRAW</div><div class="term">At zero debt, <b>withdraw</b></div></div>
+      </div>
+
+      <!-- redeem 26-32 (separate labelled run) -->
+      <div id="clip-09" class="clip" data-start="26" data-duration="6" data-track-index="2" style="z-index:10">
+        <div class="shot"><img id="s-rd-img" src="capture/17-swap-redeem-filled.png" alt="Swap, 10 qINJ" /></div>
+        <div class="panel"><div class="kicker">SWAP · REDEEM</div><div class="term"><b>10 qINJ → 9.95 stINJ</b></div></div>
+        <div class="label-run">SEPARATE SIMULATED RUN</div>
+      </div>
+
+      <!-- trust 32-36 -->
+      <div id="clip-10" class="clip" data-start="32" data-duration="4" data-track-index="2" style="z-index:10">
+        <div class="trust">
+          <div class="kicker">SOURCES · SOURCE EVERY NUMBER</div>
+          <h2>Assumptions, not promises.</h2>
+          <div class="rows">
+            <div class="row"><span>INJ staking APR (scenario)</span><b>7.53%</b></div>
+            <div class="row"><span>Max LTV</span><b>50.00%</b></div>
+            <div class="row"><span>Mint / redeem fee</span><b>0.50%</b></div>
+            <div class="row"><span>Redemption worst case</span><b>7 days</b></div>
+            <div class="row"><span>Swap buffer</span><b>500 stINJ</b></div>
+          </div>
+          <div class="note">Staking Rewards (2026-11-09) for the APR; the rest is the simulator's own config. Nothing here is live.</div>
+        </div>
+      </div>
+
+      <!-- end card 36-40 -->
+      <div id="clip-11" class="clip" data-start="36" data-duration="4" data-track-index="2" style="z-index:10">
+        <div class="end">
+          <div id="e-mark" class="mark"><svg width="72" height="72" viewBox="0 0 24 24" aria-hidden="true" fill="none"><path d="M12 3.2C12 3.2 5.6 10.2 5.6 14.4a6.4 6.4 0 0 0 12.8 0C18.4 10.2 12 3.2 12 3.2Z" stroke="#7fa0ff" stroke-width="2.1"/><path d="M8.8 15.2h6.4" stroke="#7fa0ff" stroke-width="1.7" stroke-linecap="square"/></svg></div>
+          <div id="e-word" class="word">quench</div>
+          <div id="e-dis" class="dis">Simulated demo · contracts not deployed.</div>
+          <div id="e-src" class="src">Sources: promo/facts.json · docs/promo/CLAIMS.md</div>
+        </div>
+      </div>
+
+      <!-- captions (one rail, burned in) -->
+      <div id="cap-1" class="clip rail" data-start="0.2" data-duration="2.8" data-track-index="3" style="z-index:30">Your yield pays the loan.</div>
+      <div id="cap-2" class="clip rail" data-start="3.2" data-duration="4.4" data-track-index="3" style="z-index:30">Deposit a yield-bearing INJ LST into the Basin.</div>
+      <div id="cap-3" class="clip rail" data-start="8.2" data-duration="4.2" data-track-index="3" style="z-index:30">Borrow up to fifty percent of its value as qINJ.</div>
+      <div id="cap-4" class="clip rail" data-start="13.2" data-duration="4.6" data-track-index="3" style="z-index:30">Wellspring routes the staking yield to the debt.</div>
+      <div id="cap-5" class="clip rail" data-start="18.2" data-duration="3.0" data-track-index="3" style="z-index:30">Ninety qINJ falls to zero.</div>
+      <div id="cap-6" class="clip rail" data-start="21.6" data-duration="4.0" data-track-index="3" style="z-index:30">At zero debt, withdraw the collateral.</div>
+      <div id="cap-7" class="clip rail" data-start="26.2" data-duration="4.6" data-track-index="3" style="z-index:30">Redeem qINJ for LST units. Worst case, seven days.</div>
+      <div id="cap-8" class="clip rail" data-start="31.2" data-duration="3.8" data-track-index="3" style="z-index:30">Assumptions, not promises.</div>
+      <div id="cap-9" class="clip rail" data-start="36.2" data-duration="3.3" data-track-index="3" style="z-index:30">Simulated demo. Contracts not deployed.</div>
+
+    </div>
+    <script>
+      const tl = gsap.timeline({ paused: true });
+      const push = (sel, at) => tl.fromTo(sel, { opacity: 0 }, { opacity: 1, duration: 0.35, ease: "power4.out" }, at);
+      const rise = (sel, at) => tl.fromTo(sel, { opacity: 0, y: 28 }, { opacity: 1, y: 0, duration: 0.4, ease: "power4.out" }, at);
+      /* frame 0 is already the finished composition: the hook is static */
+      push("#s-dep-img", 2.8); push("#s-mint-img", 7.8); push("#s-har-img", 12.8);
+      push("#s-zero-img", 18.8); push("#s-wd-img", 20.8); push("#s-rd-img", 25.8);
+      // slow vertical drift (fixed scale — the product never grows), one hero move per shot
+      const pan = (sel, at, dur) => tl.fromTo(sel, { y: 16 }, { y: -16, duration: dur, ease: "none" }, at);
+      pan("#s-dep-img", 3.15, 4.85); pan("#s-mint-img", 8.15, 4.85);
+      pan("#s-har-img", 13.15, 5.85); pan("#s-wd-img", 21.15, 4.85); pan("#s-rd-img", 26.15, 5.85);
+      rise("#e-word", 36.3); rise("#e-dis", 36.6); rise("#e-src", 36.9);
+      document.querySelectorAll(".row").forEach((el, i) => {
+        tl.fromTo(el, { opacity: 0, x: 24 }, { opacity: 1, x: 0, duration: 0.35, ease: "power4.out" }, 32.3 + i * 0.4);
+      });
+      const hook = { v: 90 };
+      tl.to(hook, { v: 74.44, duration: 2.5, ease: "power2.inOut", onUpdate: () => { document.querySelector("#s-hook-n").textContent = hook.v.toFixed(2); } }, 0.3);
+      const hero = { v: 74.44 };
+      tl.to(hero, { v: 0, duration: 5.5, ease: "power2.inOut", onUpdate: () => { document.querySelector("#s-har-n").textContent = hero.v.toFixed(2); } }, 13.5);
+      window.__timelines["main"] = tl;
+      tl.seek(0);
+    </script>
+  </body>
+</html>

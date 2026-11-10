@@ -1,0 +1,9 @@
+# Generated audio stems (rebuild with promo/audio/score.py + HyperFrames tts)
+audio/*.wav
+
+# Intermediate renders — the deliverable is renders/quench-16x9-final.mp4
+renders/quench-16x9.mp4
+renders/quench-16x9-draft.mp4
+
+# QA output
+qa/

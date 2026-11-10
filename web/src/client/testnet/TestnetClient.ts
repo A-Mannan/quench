@@ -40,7 +40,19 @@ export class TestnetClient implements QuenchClient {
     throw new Error(NOT_WIRED);
   }
 
+  async depositAndMint(_depositAmount: bigint, _amount: bigint): Promise<TxReceipt> {
+    throw new Error(NOT_WIRED);
+  }
+
   async harvest(): Promise<TxReceipt> {
+    throw new Error(NOT_WIRED);
+  }
+
+  async repay(_amount: bigint): Promise<TxReceipt> {
+    throw new Error(NOT_WIRED);
+  }
+
+  async selfLiquidate(): Promise<TxReceipt> {
     throw new Error(NOT_WIRED);
   }
 

@@ -157,7 +157,7 @@ export default function Landing() {
             <div className="hero__frame" data-enter>
               <div className="frame__bar">
                 <span className="frame__app">Quench</span>
-                <span className="frame__crumb">Basin / 01</span>
+                <span className="frame__crumb">Basin</span>
                 <span className="frame__net">testnet 1439</span>
               </div>
               <div className="frame__ruler" aria-hidden="true" />
@@ -524,10 +524,10 @@ export default function Landing() {
                   Debt only falls
                 </div>
                 <p>
-                  Debt only falls as staking yield burns qINJ. If you want out, you self-liquidate
-                  by choice or redeem in stINJ — no forced sale, no penalty.
+                  Debt falls when staking yield burns qINJ or a manual repayment burns it. Redemption
+                  exchanges qINJ for stINJ; the Basin opens once debt reaches zero.
                 </p>
-                <span className="risk-row__exit">Self-liquidate · redeem · zero-debt exit</span>
+                <span className="risk-row__exit">Repay · redeem · zero-debt exit</span>
               </div>
               <div className="risk-table__foot">
                 <span>Entries can pause. Redemption and withdrawal at zero debt cannot.</span>

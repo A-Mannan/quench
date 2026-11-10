@@ -52,12 +52,24 @@ export class FaultyClient implements QuenchClient {
     return this.fail('deposit', 'Simulated deposit failed before it reached the Basin.');
   }
 
+  async depositAndMint(_depositAmount: bigint, _amount: bigint): Promise<TxReceipt> {
+    return this.fail('loan', 'Simulated loan action failed before it reached the Basin.');
+  }
+
   async mint(_amount: bigint): Promise<TxReceipt> {
     return this.fail('mint', 'Simulated mint failed at the rate check.');
   }
 
   async harvest(): Promise<TxReceipt> {
     return this.fail('harvest', 'Simulated harvest failed: the rate feed did not respond.');
+  }
+
+  async repay(_amount: bigint): Promise<TxReceipt> {
+    return this.fail('repay', 'Simulated repayment failed before the debt changed.');
+  }
+
+  async selfLiquidate(): Promise<TxReceipt> {
+    return this.fail('self-liquidate', 'Simulated self-liquidation failed before the position changed.');
   }
 
   async redeem(_amount: bigint): Promise<TxReceipt> {
